@@ -35,15 +35,16 @@ BubbleChart.prototype.builder = function (data) {
     this.config.format = d3plus.object.merge(format, this.config.format);
 
     var diameter = $(this.config.container).height();
+    var width = $(this.config.container).width();
     diameter = diameter < 700 ? 700 : diameter;
 
     var bubble = d3.layout.pack()
         .sort(null)
-        .size([diameter, diameter])
+        .size([width, diameter])
         .padding(1.5);
 
     var svg = d3.select(this.config.container).append("svg")
-        .attr("width", diameter)
+        .attr("width", width)
         .attr("height", diameter)
         .attr("class", "bubble");
 
