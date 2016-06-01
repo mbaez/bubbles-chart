@@ -95,7 +95,7 @@ BubbleChart.prototype.builder = function (data) {
                 return d3plus.color.text(c);
             })
             .text(function (d) {
-                return options.format.text(d.name);
+                return thiz.config.format.text(d.name);
             });
     }
 
