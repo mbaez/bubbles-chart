@@ -73,30 +73,35 @@ BubbleChart.prototype.builder = function (data) {
             return d.r;
         })
         .style("fill", function (d) {
-            return color(d.name);
+            return color(d[thiz.config.label]);
         });
 
     gnode.append("circle")
         .attr("r", function (d) {
+            if (d.r < offset) {
+                return 0;
+            }
             return d.r - offset;
         })
         .style("fill", function (d) {
-            return color(d.name);
+            return color(d[thiz.config.label]);
         })
         .style("stroke", "#FFF")
         .style("stroke-width", "2px");
 
     if (this.config.percentage) {
+
         this.buildGauge(node);
+
     } else {
         gnode.append("text")
             .attr("class", "wrap")
             .style("fill", function (d) {
-                var c = color(d.name);
+                var c = color(d[thiz.config.label]);
                 return d3plus.color.text(c);
             })
             .text(function (d) {
-                return thiz.config.format.text(d.name);
+                return thiz.config.format.text(d[thiz.config.label]);
             });
     }
 
@@ -134,11 +139,11 @@ BubbleChart.prototype.buildGauge = function (node) {
 
     g.append("clipPath")
         .attr("id", function (d) {
-            return "g-clip-" + d3plus.string.strip(d.name);
+            return "g-clip-" + d3plus.string.strip(d[thiz.config.label]);
         })
         .append("rect")
         .attr("id", function (d) {
-            return "g-clip-rect" + d3plus.string.strip(d.name);
+            return "g-clip-rect" + d3plus.string.strip(d[thiz.config.label]);
         })
         .attr("y", function (d) {
             return -d.r + offset;
@@ -147,35 +152,45 @@ BubbleChart.prototype.buildGauge = function (node) {
             return -d.r + offset;
         })
         .attr("width", function (d) {
+            if (2 * d.r < offset) {
+                return 0;
+            }
             return 2 * d.r - offset;
         })
         .attr("height", function (d) {
-            var t = 2 * d.r - offset;
-            return t * ((100 - d.percentage) / 100);
+            if (2 * d.r < offset) {
+                return 0;
+            }
+            var p = thiz.config.percentage(d);
+            p = parseInt(p);
+            return p < 0 ? 0 : p;
         });
 
     g.append("circle")
         .attr("r", function (d) {
-            return d.r - 5;
+            if (d.r < offset) {
+                return 0;
+            }
+            return d.r - offset;
         })
         .attr("class", "shape")
         .attr("fill", "#FFF")
         .attr("clip-path", function (d) {
-            return "url(#" + "g-clip-" + d3plus.string.strip(d.name) + ")";
+            return "url(#" + "g-clip-" + d3plus.string.strip(d[thiz.config.label]) + ")";
         });
 
     g.append("text")
         .attr("class", "wrap")
         .style("fill", function (d) {
-            var c = color(d.name);
+            var c = color(d[thiz.config.label]);
             return d3plus.color.text(c);
         })
         .style("stroke", function (d) {
-            var c = color(d.name);
+            var c = color(d[thiz.config.label]);
             return c;
         })
         .text(function (d) {
-            return thiz.config.format.text(d.name);
+            return thiz.config.format.text(d[thiz.config.label]);
         });
 }
 
@@ -185,25 +200,26 @@ BubbleChart.prototype.buildGauge = function (node) {
 BubbleChart.prototype.createTooltip = function (d) {
     var thiz = this;
     var data = [{
-        "value": thiz.config.format.number(d.value),
+        "value": thiz.config.format.number(d[thiz.config.label]),
         "name": d3plus.string.title(thiz.config.size)
     }];
+
     data = this.config.tooltip ? this.config.tooltip(d) : data;
 
     var config = {
         "id": thiz.config.scope + "_visualization_focus",
         "x": d.x,
-        "y": d.y - d.r / 2,
+        "y": d.y + d.r,
         "allColors": true,
         "size": "small",
-        "color": color(d.name),
+        "color": color(d[thiz.config.label]),
         "fontsize": "15px",
         "data": data,
         "width": "219px",
         "mouseevents": true,
         "arrow": true,
         "anchor": "top left",
-        "title": d3plus.string.title(d.name),
+        "title": d3plus.string.title(d[thiz.config.label]),
     }
     d3plus.tooltip.create(config);
 }
@@ -211,25 +227,11 @@ BubbleChart.prototype.createTooltip = function (d) {
 
 // Returns a flattened hierarchy containing all leaf nodes under the root.
 BubbleChart.prototype.buildNodes = function (data) {
-    var classes = [];
     var thiz = this;
-
-    function recurse(node) {
-        if (node.length) {
-            node.forEach(function (child) {
-                recurse(child);
-            });
-        } else {
-            classes.push({
-                name: node[thiz.config.label],
-                value: node[thiz.config.size],
-                percentage: node[thiz.config.percentage]
-            });
-        }
+    for (var i = 0; i < data.length; i++) {
+        data[i].value = data[i][thiz.config.size];
     }
-
-    recurse(data);
     return {
-        children: classes
+        children: data
     };
 }
