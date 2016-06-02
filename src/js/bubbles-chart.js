@@ -203,7 +203,7 @@ BubbleChart.prototype.buildGauge = function (node) {
 BubbleChart.prototype.createTooltip = function (d) {
     var thiz = this;
     var data = [{
-        "value": thiz.config.format.number(d[thiz.config.label]),
+        "value": thiz.config.format.number(d[thiz.config.size]),
         "name": d3plus.string.title(thiz.config.size)
     }];
 
