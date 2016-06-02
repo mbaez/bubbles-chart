@@ -39,7 +39,10 @@ BubbleChart.prototype.builder = function (data) {
     diameter = diameter < 700 ? 700 : diameter;
 
     var bubble = d3.layout.pack()
-        .sort(null)
+        //.sort(null)
+        .sort(function (a, b) {
+            return a.value - b.value;
+        })
         .size([width, diameter])
         .padding(1.5);
 
