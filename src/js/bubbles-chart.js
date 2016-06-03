@@ -39,7 +39,6 @@ BubbleChart.prototype.builder = function (data) {
     diameter = diameter < 700 ? 700 : diameter;
 
     var bubble = d3.layout.pack()
-        //.sort(null)
         .sort(function (a, b) {
             return a.value - b.value;
         })
@@ -69,46 +68,67 @@ BubbleChart.prototype.builder = function (data) {
         });
 
     var gnode = node.append("g");
-
-    gnode.append("circle")
-        .attr("class", "shape")
-        .attr("r", function (d) {
-            return d.r;
-        })
-        .style("fill", function (d) {
-            return color(d[thiz.config.label]);
-        });
-
-    gnode.append("circle")
-        .attr("r", function (d) {
-            if (d.r < offset) {
-                return 0;
-            }
-            return d.r - offset;
-        })
-        .style("fill", function (d) {
-            return color(d[thiz.config.label]);
-        })
-        .style("stroke", "#FFF")
-        .style("stroke-width", "2px");
+    var main = this.circle(gnode);
 
     if (this.config.percentage) {
+        this.circle(gnode, {
+            "class": "main-shape"
+        });
+        this.circle(gnode, {
+                offset: offset
+            })
+            .style("stroke", "#FFF")
+            .style("stroke-width", "2px");
 
         this.buildGauge(node);
 
     } else {
-        gnode.append("text")
-            .attr("class", "wrap")
-            .style("fill", function (d) {
-                var c = color(d[thiz.config.label]);
-                return d3plus.color.text(c);
-            })
-            .text(function (d) {
-                return thiz.config.format.text(d[thiz.config.label]);
-            });
+        this.circle(gnode);
+        this.text(gnode);
     }
 
     d3.select(self.frameElement).style("height", diameter + "px");
+}
+
+/**
+ * Build a svg text node.
+ */
+BubbleChart.prototype.text = function (node, options) {
+    var thiz = this;
+    return node.append("text")
+        .attr("class", "wrap")
+        .style("fill", function (d) {
+            var c = color(d[thiz.config.label]);
+            return d3plus.color.text(c);
+        })
+        .text(function (d) {
+            return thiz.config.format.text(d[thiz.config.label]);
+        });
+}
+
+/**
+ * Build a svg circle node.
+ */
+BubbleChart.prototype.circle = function (node, options) {
+    var thiz = this;
+    options = typeof options == "undefined" ? {} : options;
+    options.offset = typeof options.offset == "undefined" ? 0 : options.offset;
+    options.class = typeof options.class == "undefined" ? "shape" : options.class;
+
+    return node.append("circle")
+        .attr("r", function (d) {
+            if (d.r < options.offset) {
+                return 0;
+            }
+            return d.r - options.offset;
+        })
+        .attr("class", options.class)
+        .style("fill", function (d) {
+            if (typeof options.fill != "undefined") {
+                return options.fill;
+            }
+            return color(d[thiz.config.label]);
+        });
 }
 
 /**
@@ -169,41 +189,29 @@ BubbleChart.prototype.buildGauge = function (node) {
             return p < 0 ? 0 : p;
         });
 
-    g.append("circle")
-        .attr("r", function (d) {
-            if (d.r < offset) {
-                return 0;
-            }
-            return d.r - offset;
+
+    this.circle(g, {
+            offset: offset,
+            fill: "#FFF"
         })
-        .attr("class", "shape")
-        .attr("fill", "#FFF")
         .attr("clip-path", function (d) {
             return "url(#" + "g-clip-" + d3plus.string.strip(d[thiz.config.label]) + ")";
         });
 
-    g.append("text")
-        .attr("class", "wrap")
-        .style("fill", function (d) {
-            var c = color(d[thiz.config.label]);
-            return d3plus.color.text(c);
-        })
+    this.text(g)
         .style("stroke", function (d) {
             var c = color(d[thiz.config.label]);
             return c;
-        })
-        .text(function (d) {
-            return thiz.config.format.text(d[thiz.config.label]);
         });
 }
 
 /**
- *
+ * This methdod build the tooltip.
  */
 BubbleChart.prototype.createTooltip = function (d) {
     var thiz = this;
     var data = [{
-        "value": thiz.config.format.number(d[thiz.config.size]),
+        "value": thiz.config.format.number(d[thiz.config.label]),
         "name": d3plus.string.title(thiz.config.size)
     }];
 
@@ -227,8 +235,9 @@ BubbleChart.prototype.createTooltip = function (d) {
     d3plus.tooltip.create(config);
 }
 
-
-// Returns a flattened hierarchy containing all leaf nodes under the root.
+/**
+ * This method prepare the data for the visualization.
+ */
 BubbleChart.prototype.buildNodes = function (data) {
     var thiz = this;
     for (var i = 0; i < data.length; i++) {
