@@ -406,7 +406,7 @@ BubbleChart.prototype.createTooltip = function (d) {
     data = this.config.tooltip ? this.config.tooltip(d) : data;
     //se calcula el tamaño del tooltip
     var maxWidth = 300;
-    var maxHeigth = 10 + 35 * data.length;
+    var maxHeigth = 15 + 35 * data.length;
 
     var config = {
         "id": thiz.config.scope + "_visualization_focus",
@@ -422,6 +422,7 @@ BubbleChart.prototype.createTooltip = function (d) {
         "max_width": maxWidth,
         "mouseevents": this,
         "arrow": true,
+        "align": "bottom center",
         "anchor": "top left",
         "title": d3plus.string.title(d[thiz.config.label]),
     }
