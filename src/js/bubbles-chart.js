@@ -376,8 +376,8 @@ BubbleChart.prototype.buildGauge = function (node) {
                 return 0;
             }
             var p = thiz.config.percentage(d);
-            p = parseInt(p);
-            return p < 0 ? 0 : p;
+            p = 2 * d.r * (1 - p);
+            return p < 0 ? 0 : parseInt(p);
         });
 
 
@@ -399,11 +399,20 @@ BubbleChart.prototype.buildGauge = function (node) {
 BubbleChart.prototype.createTooltip = function (d) {
     var thiz = this;
     var data = [{
-        "value": thiz.config.format.number(d[thiz.config.size]),
+        "value": d[thiz.config.size],
         "name": d3plus.string.title(thiz.config.size)
     }];
 
     data = this.config.tooltip ? this.config.tooltip(d) : data;
+    //se formatean los datos
+    for (var i = 0; i < data.length; i++) {
+        if (isNaN(data[i].value)) {
+            data[i].value = thiz.config.format.text(data[i].value);
+        } else {
+            data[i].value = thiz.config.format.number(data[i].value);
+        }
+    }
+
     //se calcula el tamaño del tooltip
     var maxWidth = 300;
     var maxHeigth = 15 + 35 * data.length;
@@ -534,7 +543,6 @@ BubbleChart.prototype.timeline = function () {
         .text(function (d) {
             return d.time;
         });
-
 
     this.selectable(ul, li, function (e) {
         var selections = []
