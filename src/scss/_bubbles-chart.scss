@@ -1,12 +1,53 @@
-
 g {
     cursor: pointer;
 }
-
 .wrap {
     stroke-width: 2px;
     stroke-linecap: butt;
     stroke-linejoin: miter;
     font-weight: 800;
     paint-order: stroke;
+}
+
+/*Timeline*/
+
+$time_active: #c3c3c3;
+$time_border: #c3c3c3;
+$text_color: #444444;
+$time_hover:#f1f1f1;
+.timeline {
+    position: relative;
+    text-align: center;
+    &:focus {
+        outline: none
+    }
+    .entry {
+        padding: 5px;
+        border: solid 1px $time_border;
+        border-right: solid 0px;
+        display: inline-block;
+        font-size: 12px;
+        text-align: center;
+        position: relative;
+        cursor: pointer;
+        a {
+            color: $text_color;
+            &:hover {
+                text-decoration: none;
+            }
+        }
+        &.selected {
+            background: $time_active;
+            border-color: $time_hover;
+        }
+        &:hover {
+            background: $time_hover;
+        }
+        &:last-child {
+            border-right: solid 1px $time_border;
+        }
+        &:hover:last-child {
+            border-color: $time_hover;
+        }
+    }
 }

@@ -4,6 +4,11 @@ var offset = 5;
 /**
  */
 function BubbleChart(options) {
+    this.dataArray = [];
+    this.timeArray = [];
+    this.timeSelection = [];
+    this.config = {};
+    this.config.defaultColor = "#ddd";
     this.initialize(options);
 }
 
@@ -11,10 +16,172 @@ function BubbleChart(options) {
  *
  */
 BubbleChart.prototype.initialize = function (options) {
-    this.config = {};
     for (var attr in options) {
         this.config[attr] = options[attr];
     }
+
+    this.prepareContainer();
+}
+
+/**
+ * D3 Selectable
+ *
+ * Bind selection functionality to `ul`, an ancestor node selection
+ * with its corresponding child selection 'li'.
+ * Selection state update rendering takes place in the `update` callback.
+ *
+ */
+BubbleChart.prototype.selectable = function (ul, li, update) {
+    function isParentNode(parentNode, node) {
+        if (!node) return false;
+        if (node === parentNode) return true;
+        return isParentNode(parentNode, node.parentNode);
+    }
+
+    function selectFirst(selection) {
+        selection.each(function (d, i) {
+            if (i === 0) d._selected = true;
+        });
+    }
+
+    function selectLast(selection) {
+        selection.each(function (d, i, j) {
+            if (i === selection[j].length - 1) d._selected = true;
+        });
+    }
+
+    var lastDecision;
+
+    function select(d, node) {
+        var parentNode = ul.filter(function () {
+                return isParentNode(this, node);
+            }).node(),
+            lis = li.filter(function () {
+                return isParentNode(parentNode, this);
+            });
+        // select ranges via `shift` key
+        if (d3.event.shiftKey) {
+            var firstSelectedIndex, lastSelectedIndex, currentIndex;
+            lis.each(function (dl, i) {
+                if (dl._selected) {
+                    firstSelectedIndex || (firstSelectedIndex = i);
+                    lastSelectedIndex = i;
+                }
+                if (this === node) currentIndex = i;
+            });
+            var min = Math.min(firstSelectedIndex, lastSelectedIndex, currentIndex);
+            var max = Math.max(firstSelectedIndex, lastSelectedIndex, currentIndex);
+
+            // select all between first and last selected
+            // when clicked inside a selection
+            lis.each(function (d, i) {
+                // preserve state for additive selection
+                d._selected = (d3.event.ctrlKey && d._selected) || (i >= min && i <= max);
+            });
+        } else {
+            // additive select with `ctrl` key
+            if (!d3.event.ctrlKey) {
+                lis.each(function (d) {
+                    d._selected = false;
+                });
+            }
+            d._selected = !d._selected;
+        }
+        // remember decision
+        lastDecision = d._selected;
+        update();
+    }
+
+    ul.selectAll("li")
+        .on('mousedown', function (d) {
+            select(d, this);
+        }).on('mouseover', function (d) {
+            // dragging over items toggles selection
+            if (d3.event.which) {
+                d._selected = lastDecision;
+                update();
+            }
+        });
+
+
+    var keyCodes = {
+        up: 38,
+        down: 40,
+        home: 36,
+        end: 35,
+        a: 65
+    };
+
+    ul.on('keydown', function () {
+        if (d3.values(keyCodes).indexOf(d3.event.keyCode) === -1) return;
+        if (d3.event.keyCode === keyCodes.a && !d3.event.ctrlKey) return;
+
+        var focus = ul.filter(':focus').node();
+        if (!focus) return;
+
+        d3.event.preventDefault();
+
+        var scope = li.filter(function (d) {
+            return isParentNode(focus, this);
+        });
+        var selecteds = scope.select(function (d) {
+            return d._selected;
+        });
+
+        if (!d3.event.ctrlKey) {
+            scope.each(function (d) {
+                d._selected = false;
+            });
+        }
+
+        var madeSelection = false;
+        switch (d3.event.keyCode) {
+            case keyCodes.up:
+                selecteds.each(function (d, i, j) {
+                    if (scope[j][i - 1]) madeSelection = d3.select(scope[j][i - 1]).data()[0]._selected = true;
+                });
+                if (!madeSelection) selectLast(scope);
+                break;
+            case keyCodes.down:
+                selecteds.each(function (d, i, j) {
+                    if (scope[j][i + 1]) madeSelection = d3.select(scope[j][i + 1]).data()[0]._selected = true;
+                });
+                if (!madeSelection) selectFirst(scope);
+                break;
+            case keyCodes.home:
+                selectFirst(scope);
+                break;
+            case keyCodes.end:
+                selectLast(scope);
+                break;
+            case keyCodes.a:
+                scope.each(function (d) {
+                    d._selected = !d3.event.shiftKey;
+                });
+                break;
+        }
+        update();
+    });
+}
+
+BubbleChart.prototype.prepareContainer = function () {
+    this.diameter = $(this.config.container).height();
+    this.width = $(this.config.container).width();
+
+    this.diameter = this.diameter < 500 ? 500 : this.diameter;
+    this.config.scope = this.config.container.replace("#", "");
+    this.vizId = this.config.scope + "-viz";
+    this.footerId = this.config.scope + "-footer";
+    var $viz = $("<div />");
+    $viz.attr("id", this.vizId);
+
+    var $footer = $("<div />");
+    $footer.attr("id", this.footerId);
+
+    $(this.config.container).append($viz);
+    $(this.config.container).append($footer);
+    d3.select(self.frameElement).style("height", this.diameter + "px");
+
 }
 
 /**
@@ -30,24 +197,24 @@ BubbleChart.prototype.builder = function (data) {
             return d3plus.number.format(number)
         }
     };
-    this.config.scope = this.config.container.replace("#", "");
+
     this.config.format = this.config.format ? this.config.format : {};
     this.config.format = d3plus.object.merge(format, this.config.format);
 
-    var diameter = $(this.config.container).height();
-    var width = $(this.config.container).width();
-    diameter = diameter < 700 ? 700 : diameter;
 
     var bubble = d3.layout.pack()
         .sort(function (a, b) {
             return a.value - b.value;
         })
-        .size([width, diameter])
+        .size([this.width, this.diameter])
         .padding(1.5);
 
-    var svg = d3.select(this.config.container).append("svg")
-        .attr("width", width)
-        .attr("height", diameter)
+    var vizId = "#" + this.vizId;
+    $(vizId).html("");
+    var svg = d3.select(vizId)
+        .append("svg")
+        .attr("width", this.width)
+        .attr("height", this.diameter)
         .attr("class", "bubble");
 
     var node = svg.selectAll(".node")
@@ -68,7 +235,12 @@ BubbleChart.prototype.builder = function (data) {
         });
 
     var gnode = node.append("g");
-    var main = this.circle(gnode);
+    var main = this.circle(gnode)
+        .style("stroke", function (d) {
+            var c = color(d[thiz.config.label]);
+            return d3plus.color.legible(c);
+        })
+        //.style("stroke-width", "1px");
 
     if (this.config.percentage) {
         this.circle(gnode, {
@@ -87,19 +259,29 @@ BubbleChart.prototype.builder = function (data) {
         this.text(gnode);
     }
 
-    d3.select(self.frameElement).style("height", diameter + "px");
 }
 
 /**
  * Build a svg text node.
  */
 BubbleChart.prototype.text = function (node, options) {
+
+    function isLikeWhite(c) {
+        var dc = 235;
+        var rgb = d3.rgb(c);
+        return rgb.r >= dc && rgb.g >= dc && rgb.b >= dc;
+    }
+
     var thiz = this;
     return node.append("text")
         .attr("class", "wrap")
         .style("fill", function (d) {
             var c = color(d[thiz.config.label]);
-            return d3plus.color.text(c);
+            c = d3plus.color.text(c);
+            if (isLikeWhite(c)) {
+                return thiz.config.defaultColor;
+            }
+            return c;
         })
         .text(function (d) {
             return thiz.config.format.text(d[thiz.config.label]);
@@ -135,22 +317,31 @@ BubbleChart.prototype.circle = function (node, options) {
  *
  */
 BubbleChart.prototype.data = function (data) {
+    this.dataArray = $.extend([], data, true);
     this.builder(data)
+    if (typeof this.config.time != "undefined") {
+        this.timeline();
+    }
     this.wrapText();
 }
 
 /**
- *
+ * Wrapping the text using D3plus text warpping. D3plus automatically
+ * detects if there is a <rect> or <circle> element placed directly
+ * before the <text> container element in DOM, and uses that element's
+ * shape and dimensions to wrap the text.
  */
 BubbleChart.prototype.wrapText = function () {
-    $(this.config.container).find(".wrap").each(function () {
-        d3plus.textwrap()
-            .container(d3.select(this))
-            .resize(true)
-            .align("middle")
-            .valign("middle")
-            .draw();
-    })
+
+    $("#" + this.vizId).find(".wrap")
+        .each(function () {
+            d3plus.textwrap()
+                .container(d3.select(this))
+                .resize(true)
+                .align("middle")
+                .valign("middle")
+                .draw();
+        })
 }
 
 /**
@@ -198,12 +389,9 @@ BubbleChart.prototype.buildGauge = function (node) {
             return "url(#" + "g-clip-" + d3plus.string.strip(d[thiz.config.label]) + ")";
         });
 
-    this.text(g)
-        .style("stroke", function (d) {
-            var c = color(d[thiz.config.label]);
-            return c;
-        });
+    this.text(g);
 }
+
 
 /**
  * This methdod build the tooltip.
@@ -216,18 +404,23 @@ BubbleChart.prototype.createTooltip = function (d) {
     }];
 
     data = this.config.tooltip ? this.config.tooltip(d) : data;
+    //se calcula el tamaño del tooltip
+    var maxWidth = 300;
+    var maxHeigth = 10 + 35 * data.length;
 
     var config = {
         "id": thiz.config.scope + "_visualization_focus",
-        "x": d.x,
-        "y": d.y + d.r,
+        "x": d3.event.clientX - maxWidth / 2,
+        "y": d3.event.clientY - maxHeigth,
         "allColors": true,
+        "fixed": true,
         "size": "small",
         "color": color(d[thiz.config.label]),
         "fontsize": "15px",
         "data": data,
-        "width": "219px",
-        "mouseevents": true,
+        "width": maxWidth,
+        "max_width": maxWidth,
+        "mouseevents": this,
         "arrow": true,
         "anchor": "top left",
         "title": d3plus.string.title(d[thiz.config.label]),
@@ -240,10 +433,123 @@ BubbleChart.prototype.createTooltip = function (d) {
  */
 BubbleChart.prototype.buildNodes = function (data) {
     var thiz = this;
-    for (var i = 0; i < data.length; i++) {
-        data[i].value = data[i][thiz.config.size];
+    var d = this.groupingData(data);
+    for (var i = 0; i < d.length; i++) {
+        d[i].value = d[i][thiz.config.size];
     }
     return {
-        children: data
+        children: d
     };
+}
+
+/**
+ * Prepare the data for the vizualization
+ */
+BubbleChart.prototype.roolup = function (v, sample) {
+    var data = {};
+    var thiz = this;
+    for (var attr in sample) {
+        if (attr == this.config.time) {
+            data[attr] = v.map(function (d) {
+                if (thiz.timeArray.indexOf(d[attr]) == -1) {
+                    thiz.timeArray.push(d[attr]);
+                }
+                return d[attr];
+            });
+        } else if (attr == this.config.label) {
+            data[attr] = v[0][attr];
+        } else if (typeof sample[attr] == "number") {
+            data[attr] = d3.sum(v, function (d) {
+                return d[attr];
+            });
+        } else {
+            data[attr] = v.map(function (d) {
+                return d[attr];
+            });
+        }
+    }
+    return data;
+}
+
+/**
+ * Groupping the array for the visualization
+ */
+BubbleChart.prototype.groupingData = function (data) {
+    var thiz = this;
+    var sampleObj = null;
+    var tmp = data.filter(function (d) {
+        return thiz.timeSelection.length == 0 || thiz.timeSelection.indexOf(d[thiz.config.time]) >= 0;
+    });
+    var filters = d3.nest()
+        .key(function (d) {
+            sampleObj = d;
+            return d[thiz.config.label];
+        })
+        .rollup(function (v) {
+            return thiz.roolup(v, sampleObj);
+        }).entries(tmp);
+
+    return filters.map(function (d) {
+        return d.values;
+    });
+}
+
+/**
+ * Tieline change handler
+ */
+BubbleChart.prototype.onChange = function () {
+    var data = $.extend([], this.dataArray, true);
+    this.builder(data);
+    this.wrapText();
+}
+
+/**
+ * Build a timeline for the visualization
+ */
+BubbleChart.prototype.timeline = function () {
+    // create lists
+    var ul = d3.select("#" + this.footerId)
+        .append('ul')
+        .attr("class", "timeline")
+        .attr('tabindex', 1);
+    var thiz = this;
+    var time = this.timeArray.map(function (d) {
+        var data = {
+            "time": d,
+            "_selected": true
+        };
+        return data;
+    });
+
+    var li = ul.selectAll('li')
+        .data(time)
+        .enter()
+        .append('li')
+        .attr("class", "entry")
+        .classed('selected', function (d) {
+            return d._selected;
+        })
+        .append('a')
+        .text(function (d) {
+            return d.time;
+        });
+
+
+    this.selectable(ul, li, function (e) {
+        var selections = []
+        ul.selectAll('li')
+            .classed('selected', function (d) {
+                if (d._selected) {
+                    selections.push(d);
+                }
+                return d._selected;
+            })
+
+        //se establecen la selecciones
+        thiz.timeSelection = selections.map(function (d) {
+            return d.time;
+        });
+        thiz.onChange();
+    });
+
 }
