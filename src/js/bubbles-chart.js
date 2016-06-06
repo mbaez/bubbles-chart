@@ -400,12 +400,13 @@ BubbleChart.prototype.createTooltip = function (d) {
     var thiz = this;
     var data = [{
         "value": d[thiz.config.size],
-        "name": d3plus.string.title(thiz.config.size)
+        "name": thiz.config.size
     }];
 
     data = this.config.tooltip ? this.config.tooltip(d) : data;
     //se formatean los datos
     for (var i = 0; i < data.length; i++) {
+        data[i].name = thiz.config.format.text(data[i].name);
         if (isNaN(data[i].value)) {
             data[i].value = thiz.config.format.text(data[i].value);
         } else {
@@ -416,24 +417,30 @@ BubbleChart.prototype.createTooltip = function (d) {
     //se calcula el tamaño del tooltip
     var maxWidth = 300;
     var maxHeigth = 15 + 35 * data.length;
-
+    var x = d3.event.clientX - maxWidth / 2;
+    var y = d3.event.clientY - maxHeigth;
+    x = x < 0 ? 0 : x;
+    y = x < 0 ? 0 : y;
     var config = {
         "id": thiz.config.scope + "_visualization_focus",
-        "x": d3.event.clientX - maxWidth / 2,
-        "y": d3.event.clientY - maxHeigth,
+        "x": x,
+        "y": y,
         "allColors": true,
         "fixed": true,
+        "offset": 20,
         "size": "small",
         "color": color(d[thiz.config.label]),
+        "fontfamily": "Helvetica Neue",
+        "fontweight": 200,
         "fontsize": "15px",
         "data": data,
         "width": maxWidth,
         "max_width": maxWidth,
-        "mouseevents": this,
+        "mouseevents": false,
         "arrow": true,
         "align": "bottom center",
         "anchor": "top left",
-        "title": d3plus.string.title(d[thiz.config.label]),
+        "title": thiz.config.format.text(d[thiz.config.label]),
     }
     d3plus.tooltip.create(config);
 }
@@ -543,6 +550,7 @@ BubbleChart.prototype.timeline = function () {
         .text(function (d) {
             return d.time;
         });
+
 
     this.selectable(ul, li, function (e) {
         var selections = []
