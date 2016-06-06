@@ -9,6 +9,11 @@ g {
     paint-order: stroke;
 }
 
+.d3plus_tooltip.d3plus_tooltip_small {
+    font-family: 'Helvetica Neue' !important;
+    font-weight: 200 !important;
+}
+
 /*Timeline*/
 
 $time_active: #c3c3c3;
