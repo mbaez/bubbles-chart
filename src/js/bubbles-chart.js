@@ -1,22 +1,71 @@
-var color = d3plus.color.scale;
-var offset = 5;
-
 /**
+ * Default config builder
+ * @return {Config} 
  */
-function BubbleChart(options) {
-    this.dataArray = [];
-    this.timeArray = [];
-    this.timeSelection = [];
-    this.config = {};
-    this.config.defaultColor = "#ddd";
-    this.initialize(options);
+function ConfigBuilder() {
+    /**
+     * @typedef Config
+     * @type Object
+     * @property {string}container
+     * @property {string}label
+     * @property {string}size
+     * @property {string}[time]
+     * @property {Object}[format]
+     * @property {string}[defaultColor]
+     * @property {string} [type] values none|wave|liquid
+     * @property {function}[percentage]
+     * @property {boolean}[sort] default true
+     * @property {Array}[color]
+     */
+    return {
+        defaultColor: "#ddd",
+        type: 'none',
+        sort: false,
+        percentage: false,
+        color: d3plus.color.scale,
+        offset: 5,
+        wave: {
+            dy: 11,
+            count: 4
+        },
+        format: {
+            text: function (text, key) {
+                return d3plus.string.title(text);
+            },
+            number: function (number, data) {
+                return d3plus.number.format(number)
+            }
+        }
+    }
 }
 
 /**
- *
+ * Bubble chart visualization builder
+ * @param {Config} options
  */
-BubbleChart.prototype.initialize = function (options) {
+function BubbleBuilder(options) {
+    this.dataArray = [];
+    this.timeArray = [];
+    this.timeSelection = [];
+    this.event = {};
+    this.config = new ConfigBuilder();
+    this.initialize(options);
+}
+
+BubbleBuilder.prototype.trigger = function (name, d) {
+    if (typeof this.event[name] != "undefined") {
+        this.event[name](d);
+    }
+}
+
+/**
+ * Initialize visualization builder.
+ */
+BubbleBuilder.prototype.initialize = function (options) {
     for (var attr in options) {
+        if (attr == 'format') {
+            options.format = d3plus.object.merge(this.config.format, options.format);
+        }
         this.config[attr] = options[attr];
     }
 
@@ -31,7 +80,7 @@ BubbleChart.prototype.initialize = function (options) {
  * Selection state update rendering takes place in the `update` callback.
  *
  */
-BubbleChart.prototype.selectable = function (ul, li, update) {
+BubbleBuilder.prototype.selectable = function (ul, li, update) {
     function isParentNode(parentNode, node) {
         if (!node) return false;
         if (node === parentNode) return true;
@@ -164,7 +213,10 @@ BubbleChart.prototype.selectable = function (ul, li, update) {
     });
 }
 
-BubbleChart.prototype.prepareContainer = function () {
+/**
+ * Create the visualization and timeline container 
+ */
+BubbleBuilder.prototype.prepareContainer = function () {
     this.diameter = $(this.config.container).height();
     this.width = $(this.config.container).width();
 
@@ -185,29 +237,19 @@ BubbleChart.prototype.prepareContainer = function () {
 }
 
 /**
- *
+ * Build the visualization
  */
-BubbleChart.prototype.builder = function (data) {
+BubbleBuilder.prototype.builder = function (data) {
     var thiz = this;
-    var format = {
-        text: function (text, key) {
-            return d3plus.string.title(text);
-        },
-        number: function (number, data) {
-            return d3plus.number.format(number)
-        }
-    };
-
-    this.config.format = this.config.format ? this.config.format : {};
-    this.config.format = d3plus.object.merge(format, this.config.format);
-
-
     var bubble = d3.layout.pack()
-        .sort(function (a, b) {
-            return a.value - b.value;
-        })
         .size([this.width, this.diameter])
         .padding(1.5);
+
+    if (this.config.sort) {
+        bubble.sort(function (a, b) {
+            return a.value - b.value;
+        });
+    }
 
     var vizId = "#" + this.vizId;
     $(vizId).html("");
@@ -224,10 +266,20 @@ BubbleChart.prototype.builder = function (data) {
             }))
         .enter().append("g")
         .attr("class", "node")
+        .on('click', function (d) {
+            thiz.trigger("click", d);
+        })
+        .on('mouseenter', function (d) {
+            thiz.trigger("mouseenter", d);
+        })
         .on('mouseover', function (d) {
+            thiz.trigger("mouseover", d);
+            d3.select(this).attr("stroke-width", "5px");
             thiz.createTooltip(d);
         })
         .on('mouseout', function (d) {
+            thiz.trigger("mouseout", d);
+            d3.select(this).attr("stroke-width", "1px");
             d3plus.tooltip.remove(thiz.config.scope + "_visualization_focus");
         })
         .attr("transform", function (d) {
@@ -237,17 +289,13 @@ BubbleChart.prototype.builder = function (data) {
     var gnode = node.append("g");
     var main = this.circle(gnode)
         .style("stroke", function (d) {
-            var c = color(d[thiz.config.label]);
+            var c = thiz.config.color(d[thiz.config.label]);
             return d3plus.color.legible(c);
-        })
-        //.style("stroke-width", "1px");
+        });
 
     if (this.config.percentage) {
         this.circle(gnode, {
-            "class": "main-shape"
-        });
-        this.circle(gnode, {
-                offset: offset
+                offset: thiz.config.offset
             })
             .style("stroke", "#FFF")
             .style("stroke-width", "2px");
@@ -264,7 +312,7 @@ BubbleChart.prototype.builder = function (data) {
 /**
  * Build a svg text node.
  */
-BubbleChart.prototype.text = function (node, options) {
+BubbleBuilder.prototype.text = function (node, options) {
 
     function isLikeWhite(c) {
         var dc = 235;
@@ -276,7 +324,7 @@ BubbleChart.prototype.text = function (node, options) {
     return node.append("text")
         .attr("class", "wrap")
         .style("fill", function (d) {
-            var c = color(d[thiz.config.label]);
+            var c = thiz.config.color(d[thiz.config.label]);
             c = d3plus.color.text(c);
             if (isLikeWhite(c)) {
                 return thiz.config.defaultColor;
@@ -291,7 +339,7 @@ BubbleChart.prototype.text = function (node, options) {
 /**
  * Build a svg circle node.
  */
-BubbleChart.prototype.circle = function (node, options) {
+BubbleBuilder.prototype.circle = function (node, options) {
     var thiz = this;
     options = typeof options == "undefined" ? {} : options;
     options.offset = typeof options.offset == "undefined" ? 0 : options.offset;
@@ -309,14 +357,15 @@ BubbleChart.prototype.circle = function (node, options) {
             if (typeof options.fill != "undefined") {
                 return options.fill;
             }
-            return color(d[thiz.config.label]);
+            return thiz.config.color(d[thiz.config.label]);
         });
 }
 
 /**
- *
+ * Set visualization data.
+ * @param{Array} data
  */
-BubbleChart.prototype.data = function (data) {
+BubbleBuilder.prototype.data = function (data) {
     this.dataArray = $.extend([], data, true);
     this.builder(data)
     if (typeof this.config.time != "undefined") {
@@ -331,7 +380,7 @@ BubbleChart.prototype.data = function (data) {
  * before the <text> container element in DOM, and uses that element's
  * shape and dimensions to wrap the text.
  */
-BubbleChart.prototype.wrapText = function () {
+BubbleBuilder.prototype.wrapText = function () {
 
     $("#" + this.vizId).find(".wrap")
         .each(function () {
@@ -345,44 +394,110 @@ BubbleChart.prototype.wrapText = function () {
 }
 
 /**
- *
+ * If the visualization si liquid, this method implement svg 
+ * transitions to the wave path
  */
-BubbleChart.prototype.buildGauge = function (node) {
+BubbleBuilder.prototype.animateWave = function (wave) {
+    var thiz = this;
+    wave.attr('transform', function (d) {
+        return 'translate(' + d.r + ')';
+    });
+    wave.transition()
+        .duration(2000)
+        .ease('linear')
+        .attr('transform', function (d) {
+            return 'translate( -' + d.r + ')';
+        })
+        .attr('T', 1)
+        .each('end', function () {
+            wave.attr('T', 0);
+            thiz.animateWave(wave);
+        });
+}
+
+/**
+ * Calcule percentage of the circle to fill.
+ */
+BubbleBuilder.prototype.fillPercentage = function (d) {
+    if (2 * d.r < this.config.offset) {
+        return 0;
+    }
+    var p = this.config.percentage(d);
+    p = 2 * d.r * (1 - p);
+    return p < 0 ? 0 : parseInt(p);
+}
+
+/**
+ * Build a wave path 
+ */
+BubbleBuilder.prototype.buildWave = function (clip) {
+    var thiz = this;
+    var path = clip.append("path")
+        .attr("id", function (d) {
+            return "g-clip-rect" + d3plus.string.strip(d[thiz.config.label]);
+        })
+        .attr("class", "path")
+        .attr("d", function (d) {
+            var p = thiz.fillPercentage(d);
+            if (p == 0) {
+                return "";
+            }
+
+            var x = parseInt(-d.r * 2);
+            var dx = parseInt(d.r * 4 / thiz.config.wave.count);
+            var b = "";
+            var y0 = p - d.r;
+            while (x < d.r * 2) {
+                b += " M " + x + " " + y0 + " q " + (dx / 2) + " " + thiz.config.wave.dy + " " + dx + " " + 0;
+                x += dx;
+            }
+            return b + "";
+        });
+    if (this.config.type == 'liquid') {
+        this.animateWave(path);
+    }
+}
+
+/**
+ * Build a gauge svg paht
+ */
+BubbleBuilder.prototype.buildGauge = function (node) {
     var g = node.append("g");
     var thiz = this;
-
-    g.append("clipPath")
+    var clip = g.append("clipPath")
         .attr("id", function (d) {
             return "g-clip-" + d3plus.string.strip(d[thiz.config.label]);
-        })
-        .append("rect")
+        });
+
+    clip.append("rect")
         .attr("id", function (d) {
             return "g-clip-rect" + d3plus.string.strip(d[thiz.config.label]);
         })
         .attr("y", function (d) {
-            return -d.r + offset;
+            return -d.r + thiz.config.offset;
         })
         .attr("x", function (d) {
-            return -d.r + offset;
+            return -d.r + thiz.config.offset;
         })
         .attr("width", function (d) {
-            if (2 * d.r < offset) {
+            if (2 * d.r < thiz.config.offset) {
                 return 0;
             }
-            return 2 * d.r - offset;
+            return 2 * d.r - thiz.config.offset;
         })
         .attr("height", function (d) {
-            if (2 * d.r < offset) {
-                return 0;
-            }
-            var p = thiz.config.percentage(d);
-            p = 2 * d.r * (1 - p);
-            return p < 0 ? 0 : parseInt(p);
+            var p = thiz.fillPercentage(d);
+            p += thiz.config.offset - thiz.config.wave.dy + 1;
+            return p < 0 ? 0 : p;
         });
 
 
+    if (this.config.type == 'liquid' || this.config.type == 'wave') {
+        this.buildWave(clip);
+    }
+
     this.circle(g, {
-            offset: offset,
+            offset: thiz.config.offset,
             fill: "#FFF"
         })
         .attr("clip-path", function (d) {
@@ -392,16 +507,22 @@ BubbleChart.prototype.buildGauge = function (node) {
     this.text(g);
 }
 
-
 /**
  * This methdod build the tooltip.
  */
-BubbleChart.prototype.createTooltip = function (d) {
+BubbleBuilder.prototype.createTooltip = function (d) {
     var thiz = this;
     var data = [{
         "value": d[thiz.config.size],
         "name": thiz.config.size
     }];
+
+    if (this.config.percentage) {
+        data.push({
+            "value": this.config.percentage(d) * 100,
+            "name": "Percentage"
+        });
+    }
 
     data = this.config.tooltip ? this.config.tooltip(d) : data;
     //se formatean los datos
@@ -424,12 +545,12 @@ BubbleChart.prototype.createTooltip = function (d) {
     var config = {
         "id": thiz.config.scope + "_visualization_focus",
         "x": x,
-        "y": y,
+        "y": y - 50,
         "allColors": true,
         "fixed": true,
         "offset": 20,
         "size": "small",
-        "color": color(d[thiz.config.label]),
+        "color": thiz.config.color(d[thiz.config.label]),
         "fontfamily": "Helvetica Neue",
         "fontweight": 200,
         "fontsize": "15px",
@@ -448,7 +569,7 @@ BubbleChart.prototype.createTooltip = function (d) {
 /**
  * This method prepare the data for the visualization.
  */
-BubbleChart.prototype.buildNodes = function (data) {
+BubbleBuilder.prototype.buildNodes = function (data) {
     var thiz = this;
     var d = this.groupingData(data);
     for (var i = 0; i < d.length; i++) {
@@ -462,7 +583,7 @@ BubbleChart.prototype.buildNodes = function (data) {
 /**
  * Prepare the data for the vizualization
  */
-BubbleChart.prototype.roolup = function (v, sample) {
+BubbleBuilder.prototype.roolup = function (v, sample) {
     var data = {};
     var thiz = this;
     for (var attr in sample) {
@@ -491,7 +612,7 @@ BubbleChart.prototype.roolup = function (v, sample) {
 /**
  * Groupping the array for the visualization
  */
-BubbleChart.prototype.groupingData = function (data) {
+BubbleBuilder.prototype.groupingData = function (data) {
     var thiz = this;
     var sampleObj = null;
     var tmp = data.filter(function (d) {
@@ -514,7 +635,7 @@ BubbleChart.prototype.groupingData = function (data) {
 /**
  * Tieline change handler
  */
-BubbleChart.prototype.onChange = function () {
+BubbleBuilder.prototype.onChange = function () {
     var data = $.extend([], this.dataArray, true);
     this.builder(data);
     this.wrapText();
@@ -523,14 +644,15 @@ BubbleChart.prototype.onChange = function () {
 /**
  * Build a timeline for the visualization
  */
-BubbleChart.prototype.timeline = function () {
+BubbleBuilder.prototype.timeline = function () {
+
     // create lists
     var ul = d3.select("#" + this.footerId)
         .append('ul')
         .attr("class", "timeline")
         .attr('tabindex', 1);
     var thiz = this;
-    var time = this.timeArray.map(function (d) {
+    var time = this.timeArray.sort().map(function (d) {
         var data = {
             "time": d,
             "_selected": true
@@ -551,7 +673,6 @@ BubbleChart.prototype.timeline = function () {
             return d.time;
         });
 
-
     this.selectable(ul, li, function (e) {
         var selections = []
         ul.selectAll('li')
@@ -567,6 +688,29 @@ BubbleChart.prototype.timeline = function () {
             return d.time;
         });
         thiz.onChange();
+        thiz.trigger("timechange", thiz.timeSelection);
     });
+}
 
+/**
+ * Bubble chart visualization builder
+ * @param{Config} options
+ */
+function BubbleChart(options) {
+    this.builder = new BubbleBuilder(options);
+}
+
+/**
+ * Set visualization data.
+ * @param{Array} data
+ */
+BubbleChart.prototype.data = function (data) {
+    this.builder.data(data);
+}
+
+/**
+ * @param event values click|timechange|mouseover|mouseout|mouseenter
+ */
+BubbleChart.prototype.on = function (event, handler) {
+    this.builder.event[event] = handler;
 }
