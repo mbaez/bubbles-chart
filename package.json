@@ -1,7 +1,7 @@
 {
     "name": "bubbles-chart",
     "version": "v0.0.0",
-    "authors": ["Maximiliano Báez González <mxbg.py@gmail.com>"],
+    "author": "Maximiliano Báez González <mxbg.py@gmail.com>",
     "description": "Bubble chart",
     "private": true,
     "devDependencies": {

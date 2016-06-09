@@ -47,21 +47,25 @@ module.exports = function (grunt) {
                 }
             }
         },
+
         copy: {
             main: {
                 files: [{
-                        cwd: 'src/',
-                        src: '**/*.html',
-                        dest: 'dist/',
+                        cwd: './test',
+                        src: '**/*',
+                        dest: 'dist/test',
                         expand: true
                     }
                 ]
             }
         },
+
+
         uglify: {
             options: {
                 mangle: false,
-                sourceMap: false
+                sourceMap: false,
+                beautify: false
             },
             build: {
                 files: [{
@@ -134,11 +138,18 @@ module.exports = function (grunt) {
                 },
                 files: ['src/**/*'],
                 tasks: ['default']
+            },
+            test: {
+                options: {
+                    livereload: true
+                },
+                files: ['test/**/*'],
+                tasks: ['default', 'copy']
             }
         }
     });
 
     grunt.registerTask('default', ['uglify', 'sass', 'string-replace', 'concat', 'usebanner']);
     grunt.registerTask('build', ["default"]);
-    grunt.registerTask('serve', ['default', 'configureProxies:server', "open", 'connect:server', 'watch']);
+    grunt.registerTask('serve', ['default', 'copy', 'configureProxies:server', "open", 'connect:server', 'watch']);
 };
