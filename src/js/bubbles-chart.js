@@ -517,6 +517,7 @@ BubbleBuilder.prototype.buildGauge = function (node) {
         })
         .attr("clip-path", function (d) {
             var clip = window.location.href;
+            clip = clip.split("#")[0];
             clip += "#g-clip-" + d3plus.string.strip(d[thiz.config.label]);
             return "url(" + clip + ")";
         });
