@@ -16,6 +16,7 @@ function ConfigBuilder() {
      * @property {function}[percentage]
      * @property {boolean}[sort] default true
      * @property {Array}[color]
+     * @property {number}[padding]
      */
     return {
         defaultColor: "#ddd",
@@ -24,6 +25,7 @@ function ConfigBuilder() {
         percentage: false,
         color: d3plus.color.scale,
         offset: 5,
+        padding: 30,
         wave: {
             dy: 11,
             count: 4
@@ -52,6 +54,9 @@ function BubbleBuilder(options) {
     this.initialize(options);
 }
 
+/**
+ * Call a event handler if exists
+ */
 BubbleBuilder.prototype.trigger = function (name, d) {
     if (typeof this.event[name] != "undefined") {
         this.event[name](d);
@@ -218,7 +223,7 @@ BubbleBuilder.prototype.selectable = function (ul, li, update) {
  */
 BubbleBuilder.prototype.prepareContainer = function () {
     this.diameter = $(this.config.container).height();
-    this.width = $(this.config.container).width();
+    this.width = $(this.config.container).width() - this.config.padding;
 
     this.diameter = this.diameter < 500 ? 500 : this.diameter;
     this.config.scope = this.config.container.replace("#", "");
@@ -501,7 +506,9 @@ BubbleBuilder.prototype.buildGauge = function (node) {
             fill: "#FFF"
         })
         .attr("clip-path", function (d) {
-            return "url(#" + "g-clip-" + d3plus.string.strip(d[thiz.config.label]) + ")";
+            var clip = window.location.href;
+            clip += "#g-clip-" + d3plus.string.strip(d[thiz.config.label]);
+            return "url(" + clip + ")";
         });
 
     this.text(g);
@@ -545,10 +552,10 @@ BubbleBuilder.prototype.createTooltip = function (d) {
     var config = {
         "id": thiz.config.scope + "_visualization_focus",
         "x": x,
-        "y": y - 50,
+        "y": y - 20,
         "allColors": true,
         "fixed": true,
-        "offset": 20,
+        //"offset": 20,
         "size": "small",
         "color": thiz.config.color(d[thiz.config.label]),
         "fontfamily": "Helvetica Neue",
