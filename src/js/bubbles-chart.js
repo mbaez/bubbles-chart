@@ -11,9 +11,9 @@ function ConfigBuilder() {
      * @property {string}size
      * @property {string}[time]
      * @property {Object}[format]
+     * @property {function}[percentage]
      * @property {string}[defaultColor]
      * @property {string} [type] values none|wave|liquid
-     * @property {function}[percentage]
      * @property {boolean}[sort] default true
      * @property {Array}[color]
      * @property {number}[padding]
@@ -26,6 +26,7 @@ function ConfigBuilder() {
         color: d3plus.color.scale,
         offset: 5,
         padding: 30,
+        tooltip: false,
         wave: {
             dy: 11,
             count: 4
