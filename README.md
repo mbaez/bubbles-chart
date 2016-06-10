@@ -54,7 +54,6 @@ Type: `String`
 
 Container where the list will build. 
 
-
 #### options.label
 Type: `Array|String`
 
@@ -68,10 +67,14 @@ The json attribute name that determines the size of the bubble.
 #### options[time]
 Type: `String`
 
+Default: `false`
+
 The json attribute name that determines the time of the chart. Define the timeline.
 
 #### options[type]
 Type: `String`
+
+Default: `none`
 
 Determine the type of fill of the bubble, when percentage filling function is used.
 The types available are:
@@ -80,10 +83,18 @@ The types available are:
 * `wave` : wave like fill.
 * `liquid` : animate wave fill.
 
+#### options[defaultColor]
+Type: `String`
+
+Default: `#ddd`
+
+Text default color over a white background. 
 
 #### options[percentage(d)]
 Type: `Function`
-* `{Object} d`: the visualization data.
+* `{Object} d`: the bubble data.
+
+Default: `false` 
 
 Return a number between 0 and 1. Calculates the percentage of the bubble to fill.
 
@@ -113,6 +124,52 @@ var viz = new BubbleChart({
 //do something
 viz.data(data);
 
+```
+
+#### options[format]
+Type: `Object`
+
+Visualization text and number formater
+
+```javascript
+var viz = new BubbleChart({
+    container: "#bubbles-chart",
+    label: "label",
+    size: "size",
+    format: {
+        text: function (text, key) {
+            return d3plus.string.title(text);
+        },
+        number: function (number, data) {
+            return d3plus.number.format(number)
+        }
+    }
+});
+```
+
+#### options[tooltip(d)]
+Type: `Function`
+
+* `{Object} d`: the bubble data.
+ 
+Bubble tooltip builder.
+
+```javascript
+var viz = new BubbleChart({
+    container: "#bubbles-chart",
+    label: "label",
+    size: "size",
+    tooltip: function (d) {
+        return [{
+                "value": d.att1,
+                "name": "Attr1:"
+            }, {
+                "value": d.attr2,
+                "name": "Attr2:"
+            }
+        ]
+    }
+});
 ```
 
 ## Functions
