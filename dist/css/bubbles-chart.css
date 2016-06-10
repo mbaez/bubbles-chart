@@ -1,8 +1,8 @@
 /*!
   * bubbles-chart : Bubble chart
-  * @version v0.0.0
+  * @version v0.0.1
   * @author Maximiliano Báez González <mxbg.py@gmail.com>
-  * @date 2016-06-09
+  * @date 2016-06-10
   */
 
-g{cursor:pointer}.wrap{stroke-width:2px;stroke-linecap:butt;stroke-linejoin:miter;font-weight:800;paint-order:stroke}.timeline{position:relative;text-align:center}.timeline:focus{outline:none}.timeline .entry{padding:5px;border:solid 1px #c3c3c3;border-right:solid 0px;display:inline-block;font-size:12px;text-align:center;position:relative;cursor:pointer}.timeline .entry a{color:#444}.timeline .entry a:hover{text-decoration:none}.timeline .entry.selected{background:#c3c3c3;border-color:#f1f1f1}.timeline .entry:hover{background:#f1f1f1}.timeline .entry:last-child{border-right:solid 1px #c3c3c3}.timeline .entry:hover:last-child{border-color:#f1f1f1}
+g{cursor:pointer}.wrap{stroke-width:2px;stroke-linecap:butt;stroke-linejoin:miter;font-weight:800;paint-order:stroke}.timeline{position:relative;text-align:center}.timeline:focus{outline:none}.timeline .entry{padding:5px;border:solid 1px #c3c3c3;border-right:solid 0px;display:inline-block;font-size:12px;text-align:center;position:relative;cursor:pointer}.timeline .entry a{color:#444}.timeline .entry a:hover{text-decoration:none}.timeline .entry.selected{background:#c3c3c3;border-color:#f1f1f1}.timeline .entry:hover{background:#f1f1f1}.timeline .entry:last-child{border-right:solid 1px #c3c3c3}.timeline .entry:hover:last-child{border-color:#f1f1f1}.bubble-toogle{display:block;text-align:center}

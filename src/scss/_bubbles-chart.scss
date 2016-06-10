@@ -10,6 +10,7 @@ g {
 }
 
 /*Timeline*/
+
 $time_active: #c3c3c3;
 $time_border: #c3c3c3;
 $text_color: #444444;
@@ -49,4 +50,8 @@ $time_hover:#f1f1f1;
             border-color: $time_hover;
         }
     }
+}
+.bubble-toogle {
+    display: block;
+    text-align: center;
 }

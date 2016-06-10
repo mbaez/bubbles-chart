@@ -27,6 +27,10 @@ function ConfigBuilder() {
         offset: 5,
         padding: 30,
         tooltip: false,
+        toggle: {
+            title: "",
+            size: false
+        },
         wave: {
             dy: 11,
             count: 4
@@ -374,9 +378,14 @@ BubbleBuilder.prototype.circle = function (node, options) {
 BubbleBuilder.prototype.data = function (data) {
     this.dataArray = $.extend([], data, true);
     this.builder(data)
-    if (typeof this.config.time != "undefined") {
+    if (this.config.time) {
         this.timeline();
     }
+    if (this.config.toggle.size) {
+        this.sizeToggle();
+    }
+
+
     this.wrapText();
 }
 
@@ -697,6 +706,33 @@ BubbleBuilder.prototype.timeline = function () {
         });
         thiz.onChange();
         thiz.trigger("timechange", thiz.timeSelection);
+    });
+}
+
+
+BubbleBuilder.prototype.sizeToggle = function () {
+    var $footer = $("#" + this.footerId);
+    var $toogle = $("<div></div>");
+    $toogle.addClass("bubble-toogle");
+    $toogle.attr("id", this.footerId + "-toogle");
+    $footer.append($toogle);
+    var thiz = this;
+    var toggle = d3plus.form()
+        .data(this.config.toggle.size)
+        .title(this.config.toggle.title)
+        .container("#" + this.footerId + "-toogle")
+        .id("value")
+        .text("text")
+        .type("toggle")
+        .draw();
+
+    $footer.find(".d3plus_toggle").on("click", function (d) {
+        var $target = $(this)[0];
+        var data = $target["__data__"];
+        if (typeof data != "undefined") {
+            thiz.config.size = data.value;
+            thiz.onChange();
+        }
     });
 }
 
