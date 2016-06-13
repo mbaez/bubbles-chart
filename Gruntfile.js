@@ -121,7 +121,6 @@ module.exports = function (grunt) {
                         '  * <%= pkg.name %> : <%= pkg.description %>\n' +
                         '  * @version <%= pkg.version %>\n' +
                         '  * @author <%= pkg.author %>\n' +
-                        '  * @date <%= grunt.template.today("yyyy-mm-dd") %>\n' +
                         '  */\n',
                     linebreak: true
                 },
