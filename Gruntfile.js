@@ -60,7 +60,6 @@ module.exports = function (grunt) {
             }
         },
 
-
         uglify: {
             options: {
                 mangle: false,
@@ -72,7 +71,7 @@ module.exports = function (grunt) {
                     expand: true,
                     cwd: 'src/js',
                     src: '*.js',
-                    dest: 'dist/js',
+                    dest: 'dist/tmp',
                     ext: '.js',
                     extDot: 'last'
                 }]
@@ -84,10 +83,25 @@ module.exports = function (grunt) {
             },
             libs: {
                 src: [
+                'dist/tmp/bubbles-chart.js',
+                'dist/tmp/layout-orbit.js',
+                'dist/tmp/config-builder.js',
+                'dist/tmp/events.js',
+                'dist/tmp/ui-builder.js',
+                'dist/tmp/bubble-animation.js',
+                'dist/tmp/bubble-builder.js',
+                'dist/tmp/tree-builder.js',
+                'dist/tmp/bubbles-chart.js'
+                ],
+                dest: 'dist/js/bubbles-chart.min.js'
+            },
+
+            libsfull: {
+                src: [
                 'src/vendors/jquery/dist/jquery.min.js',
                 'src/vendors/d3/d3.min.js',
                 'src/vendors/d3plus/d3plus.min.js',
-                'dist/js/bubbles-chart.js',
+                'dist/js/bubbles-chart.min.js'
                 ],
                 dest: 'dist/js/bubbles-chart.full.js'
             }
@@ -95,7 +109,7 @@ module.exports = function (grunt) {
         remove: {
             default_options: {
                 trace: true,
-                dirList: ['dist/js']
+                dirList: ['dist/tmp']
             }
         },
 
@@ -148,7 +162,7 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.registerTask('default', ['uglify', 'sass', 'string-replace', 'concat', 'usebanner']);
+    grunt.registerTask('default', ['uglify', 'remove', 'sass', 'string-replace', 'concat', 'usebanner']);
     grunt.registerTask('build', ["default"]);
     grunt.registerTask('serve', ['default', 'copy', 'configureProxies:server', "open", 'connect:server', 'watch']);
 };
