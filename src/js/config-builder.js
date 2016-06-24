@@ -1,0 +1,56 @@
+/**
+ * Default config builder
+ * @return {Config} 
+ */
+function ConfigBuilder() {
+    /**
+     * @typedef Config
+     * @type Object
+     * @property {string}container
+     * @property {string}label
+     * @property {string}size
+     * @property {string}[time]
+     * @property {Object}[format]
+     * @property {function}[percentage]
+     * @property {string}[defaultColor]
+     * @property {string} [type] values none|wave|liquid
+     * @property {boolean}[sort] default true
+     * @property {Array}[color]
+     * @property {number}[padding]
+     */
+    return {
+        defaultColor: "#ddd",
+        type: 'none',
+        sort: false,
+        percentage: false,
+        color: d3plus.color.scale,
+        offset: 5,
+        padding: 30,
+        tooltip: false,
+        level: 0,
+        levels: [],
+        toggle: {
+            title: "",
+            size: false
+        },
+        wave: {
+            dy: 11,
+            count: 4
+        },
+        tree: {
+            speed: 250,
+        },
+        animation: {
+            speed: 3000,
+            method: "no-recursive"
+        },
+        format: {
+            text: function (text, key) {
+                return d3plus.string.title(text);
+            },
+            number: function (number, data) {
+                return d3plus.number.format(number)
+            }
+        }
+    }
+}
