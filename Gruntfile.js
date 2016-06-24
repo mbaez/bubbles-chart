@@ -162,7 +162,7 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.registerTask('default', ['uglify', 'remove', 'sass', 'string-replace', 'concat', 'usebanner']);
+    grunt.registerTask('default', ['uglify', 'sass', 'string-replace', 'concat', 'remove', 'usebanner']);
     grunt.registerTask('build', ["default"]);
     grunt.registerTask('serve', ['default', 'copy', 'configureProxies:server', "open", 'connect:server', 'watch']);
 };
