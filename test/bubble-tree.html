@@ -1,0 +1,48 @@
+<!DOCTYPE html >
+<html ng-app="odhmApp">
+
+<head>
+    <title>Frontend Seed Project</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" media="screen" href="../css/bubbles-chart.css">
+    <link rel="shortcut icon" type="image/png" href="images/favicon.ico">
+    <script type="text/javascript" src="js/flare.js"></script>
+    <script type="text/javascript" src="../js/bubbles-chart.full.js"></script>
+    <script type="text/javascript" src="../js/bubbles-chart.min.js"></script>
+
+    <style>
+        #test-viz {
+            min-height: 500px;
+            width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        svg {
+            width: 500px;
+            min-height: 500px;
+        }
+
+    </style>
+    <script>
+        $(function() {
+
+            var options = {
+                container: "#test",
+                label: "label",
+                type: "tree",
+                size: "amount",
+                levels: ["Fuente de Financiamiento", "Nivel", "Entidad", " Unidad Responsable"]
+            };
+
+            var viz = new BubbleChart(options);
+            viz.data(data);
+        });
+
+    </script>
+
+    <body>
+        <div id="test"> </div>
+    </body>
