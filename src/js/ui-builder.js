@@ -13,8 +13,10 @@ UiBuilder.prototype.constructor = UiBuilder;
 UiBuilder.prototype.prepareContainer = function () {
     this.diameter = $(this.config.container).height();
     this.width = $(this.config.container).width() - this.config.padding;
+    // si el contenedor es muy pequeño se utilizan los valores por defecto
+    this.diameter = this.diameter < this.config.height ? this.config.height : this.diameter;
+    this.width = this.width < this.config.width ? this.config.width : this.width;
 
-    this.diameter = this.diameter < 500 ? 500 : this.diameter;
     this.config.scope = this.config.container.replace("#", "");
     this.vizId = this.config.scope + "-viz";
     this.footerId = this.config.scope + "-footer";
@@ -26,7 +28,8 @@ UiBuilder.prototype.prepareContainer = function () {
 
     $(this.config.container).append($viz);
     $(this.config.container).append($footer);
-    d3.select(self.frameElement).style("height", this.diameter + "px");
+
+    $(this.config.container).height(this.diameter);
 }
 
 

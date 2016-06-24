@@ -21,6 +21,8 @@ function ConfigBuilder() {
     return {
         defaultColor: "#ddd",
         type: 'none',
+        width: 500,
+        height: 500,
         sort: false,
         percentage: false,
         color: d3plus.color.scale,
@@ -39,6 +41,7 @@ function ConfigBuilder() {
         },
         tree: {
             speed: 250,
+            minRadius: 20,
         },
         animation: {
             speed: 3000,

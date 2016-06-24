@@ -53,7 +53,7 @@ TreeBuilder.prototype.circle = function (node) {
             r = thiz.rscale(d.max) * 1.5 - offset;
         }
         d.r = r;
-        return r < 10 ? 10 : r;
+        return r < thiz.config.tree.minRadius ? thiz.config.tree.minRadius : r;
     }
 
     node.append("circle")
