@@ -15,6 +15,7 @@ $time_active: #c3c3c3;
 $time_border: #c3c3c3;
 $text_color: #444444;
 $time_hover:#f1f1f1;
+$gray_color:#ddd;
 .timeline {
     position: relative;
     text-align: center;
@@ -54,4 +55,127 @@ $time_hover:#f1f1f1;
 .bubble-toogle {
     display: block;
     text-align: center;
+}
+
+/* breadcrums*/
+
+ul.bubble-hierarchies {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    height: 39px;
+    overflow: hidden;
+    display: inline-block;
+    li {
+        float: left;
+        margin: 0 .5em 0 1em;
+        a {
+            background: $gray_color;
+            padding: .7em 1em;
+            float: left;
+            text-decoration: none;
+            color: $text_color;
+            position: relative;
+            cursor: pointer;
+            baseline-shift: -5%;
+            height: auto;
+        }
+        a:hover {
+            color: $text_color;
+        }
+        a:not(.disable):hover {
+            opacity: 0.7;
+        }
+        a::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            margin-top: -20px;
+            border-width: 20px 0px 19px 14px;
+            border-style: solid;
+            border-color: $gray_color $gray_color $gray_color transparent;
+            left: -14px;
+        }
+    }
+    li:last-child a::after {
+        border-color: $gray_color $gray_color $gray_color $gray_color;
+    }
+    li a::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        margin-top: -1.5em;
+        border-top: 1.5em solid transparent;
+        border-bottom: 1.5em solid transparent;
+        border-left: 1em solid $gray_color;
+        right: -1em;
+    }
+    .current,
+    .current:hover {
+        font-weight: bold;
+        background: none;
+    }
+    .current::after,
+    .current::before {
+        content: normal;
+    }
+    li a.disable {
+        cursor: not-allowed;
+    }
+    /*Primer elemento del breadcrums*/
+    li:first-child a {
+        background-color: $gray_color;
+        color: $text_color;
+    }
+    li:first-child a::before {
+        border-color: $gray_color $gray_color $gray_color $gray_color;
+    }
+}
+@media only screen and (min-width: 220px) and (max-width: 540px) {
+    .bubble-hierarchies {
+        height: auto !important;
+    }
+    .bubble-hierarchies li,
+    .bubble-hierarchies li a {
+        width: 95%;
+    }
+    .bubble-hierarchies li a {
+        margin-top: 1px;
+    }
+    .bubble-hierarchies li a::before {
+        border-color: $gray_color $gray_color $gray_color $gray_color;
+        height: 40px;
+    }
+    .bubble-hierarchies li:last-child a::after {
+        border-color: transparent transparent transparent $gray_color;
+    }
+}
+.top-note {
+    color: $text_color;
+    font-size: 12px;
+    font-style: italic;
+    font-weight: bold;
+}
+.bubble-breadcrumbs {
+    margin-left: 0px;
+    padding: 0px;
+    margin-bottom: 0px;
+    margin-top: 0px;
+    background-color: transparent;
+    color: $text_color;
+    height: 35px;
+    .note {
+        text-align: right;
+        font-size: 12px;
+        font-style: italic;
+        font-weight: bold;
+    }
+}
+.bubble-breadcrumbs > li {
+    display: inline-block;
+}
+.bubble-breadcrumbs > li + li:before {
+    content: "/\00a0";
+    padding: 0 5px;
+    color: $text_color;
 }
