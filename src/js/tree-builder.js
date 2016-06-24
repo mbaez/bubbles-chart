@@ -33,7 +33,7 @@ TreeBuilder.prototype.prepareData = function (data) {
  */
 TreeBuilder.prototype.initialize = function (options) {
     this.prepareContainer();
-    if (typeof this.config.levels != "undefined") {
+    if (this.config.levels.length > 0) {
         this.breadcrumbs();
     }
 }
@@ -214,12 +214,16 @@ TreeBuilder.prototype.onClick = function (node, d) {
                 if (d._parent) {
                     thiz.config.level -= 1;
                     thiz.data(getCleandata(d._parent));
-                    thiz.drillup(d);
+                    if (this.config.levels.length > 0) {
+                        thiz.drillup(d);
+                    }
                 }
             } else {
                 thiz.data(getCleandata(d));
-                thiz.updateBreadcrumbs(d);
-                thiz.config.level += 1;
+                if (this.config.levels.length > 0) {
+                    thiz.updateBreadcrumbs(d);
+                    thiz.config.level += 1;
+                }
             }
         });
 }
