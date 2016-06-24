@@ -1,6 +1,6 @@
 {
     "name": "bubbles-chart",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "dependencies": {
         "jquery": "2.2.4",
         "d3": "3.5.*",
