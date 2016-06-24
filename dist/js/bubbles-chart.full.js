@@ -1,6 +1,6 @@
 /*!
   * bubbles-chart : Bubble chart
-  * @version v0.0.1
+  * @version v0.0.2
   * @author Maximiliano Báez González <mxbg.py@gmail.com>
   */
 
