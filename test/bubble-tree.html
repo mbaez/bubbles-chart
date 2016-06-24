@@ -13,16 +13,19 @@
     <script type="text/javascript" src="../js/bubbles-chart.min.js"></script>
 
     <style>
-        #test-viz {
-            min-height: 500px;
-            width: 500px;
+        #test {
             margin-left: auto;
             margin-right: auto;
         }
         
+        #test-viz {
+            width: 100%;
+            height: 100%;
+        }
+        
         svg {
-            width: 500px;
-            min-height: 500px;
+            width: 100%;
+            height: 100%;
         }
 
     </style>
@@ -33,6 +36,8 @@
                 container: "#test",
                 label: "label",
                 type: "tree",
+                width: 800,
+                height: 800,
                 size: "amount",
                 levels: ["Fuente de Financiamiento", "Nivel", "Entidad", " Unidad Responsable"]
             };
