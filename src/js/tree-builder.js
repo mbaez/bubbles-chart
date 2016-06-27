@@ -1,17 +1,20 @@
 function TreeBuilder(config) {
-    this.config = config;
+    UiBuilder.call(this, config);
     this.rscale = 0;
     this.initialize();
 }
 
 TreeBuilder.prototype = new UiBuilder();
-TreeBuilder.prototype.constructor = UiBuilder;
+TreeBuilder.prototype.constructor = TreeBuilder;
 
 TreeBuilder.prototype.prepareData = function (data) {
     var thiz = this;
+    var childs = this.buildNodes(data.children);
+    data.children = childs.children;
     data[thiz.config.size] = d3.sum(data.children, function (d) {
         return d[thiz.config.size];
     });
+
     data.max = d3.max(data.children, function (d) {
         return d[thiz.config.size];
     });
@@ -19,30 +22,21 @@ TreeBuilder.prototype.prepareData = function (data) {
     data.min = d3.min(data.children, function (d) {
         return d[thiz.config.size];
     });
-    data.min = data.min == data.max ? 0 : data.min;
 
+    data.min = data.min == data.max ? 0 : data.min;
+    var nChilds = 5 + data.children.length;
+    nChilds = nChilds < 10 ? 10 : nChilds;
     this.rscale = d3.scale.linear()
         .domain([data.min, data.max])
-        .range([0, this.diameter / 10]);
+        .range([0, this.diameter / nChilds]);
 
     return data;
 }
 
+
 /**
- * Initialize visualization builder.
+ * 
  */
-TreeBuilder.prototype.initialize = function (options) {
-    this.prepareContainer();
-    if (this.config.levels.length > 0) {
-        this.breadcrumbs();
-    }
-}
-
-TreeBuilder.prototype.data = function (data) {
-    var gdata = this.prepareData(data);
-    this.builder(gdata);
-}
-
 TreeBuilder.prototype.circle = function (node) {
     var thiz = this;;
 
@@ -50,7 +44,7 @@ TreeBuilder.prototype.circle = function (node) {
         offset = offset ? offset : 0;
         var r = thiz.rscale(d[thiz.config.size]) - offset;
         if (d.max) {
-            r = thiz.rscale(d.max) * 1.5 - offset;
+            r = thiz.diameter / 6 - offset;
         }
         d.r = r;
         return r < thiz.config.tree.minRadius ? thiz.config.tree.minRadius : r;
@@ -83,8 +77,34 @@ TreeBuilder.prototype.circle = function (node) {
         .style("stroke-width", "1px");
 }
 
+/**
+ * Tieline change handler
+ */
+TreeBuilder.prototype.onChange = function () {
+    var data = $.extend({}, this.dataArray[this.config.level], true);
+    this.builder(data);
+    this.wrapText();
+}
 
-TreeBuilder.prototype.builder = function (gdata) {
+TreeBuilder.prototype.redraw = function (data, step) {
+    var lvl = this.config.level + step;
+    if (lvl > 0) {
+        this.dataArray[lvl] = $.extend({}, data, true);
+    } else {
+        data = $.extend({}, this.dataArray[lvl], true);
+    }
+    this.builder(data);
+    if (this.config.time) {
+        this.timeline();
+    }
+    this.wrapText();
+}
+
+TreeBuilder.prototype.afterData = function (data) {
+    this.dataArray[this.config.level] = $.extend({}, data, true);
+}
+
+TreeBuilder.prototype.builder = function (data) {
     var vizId = "#" + this.vizId;
     var thiz = this;
     var viz = document.getElementById(this.vizId);
@@ -102,6 +122,7 @@ TreeBuilder.prototype.builder = function (gdata) {
             return orbitScale(d.depth)
         });
 
+    var gdata = this.prepareData(data);
     orbit.nodes(gdata);
 
     var nodes = d3.select(vizId)
@@ -167,10 +188,36 @@ TreeBuilder.prototype.builder = function (gdata) {
         .style("stroke", "black")
         .style("stroke-dasharray", "2,2")
         .style("stroke-width", "1px");
-
-    this.wrapText();
 }
 
+TreeBuilder.prototype.getCleandata = function (d, step) {
+    var tmp = {}
+    tmp[this.config.label] = d[this.config.label];
+    tmp[this.config.size] = d[this.config.size];
+    if (this.config.time && d[this.config.time]) {
+        tmp[this.config.time] = d[this.config.time];
+    }
+    if (d.children) {
+        tmp.children = $.extend([], d.children, true);
+    }
+    var lvl = this.config.level - step;
+    if (lvl > 0 && step > 0 || lvl >= 0 && step == 0) {
+        tmp._parent = $.extend({}, this.dataArray[lvl], true);
+    }
+    return tmp;
+}
+
+TreeBuilder.prototype.getChild = function (d) {
+    var dArray = $.extend({}, this.dataArray[this.config.level], true);
+    var tmp = this.buildNodes(dArray.children, false);
+    dArray.children = tmp.children;
+    for (var i = 0; i < dArray.children.length; i++) {
+        if (dArray.children[i][this.config.label] == d[this.config.label]) {
+            return dArray.children[i];
+        }
+    }
+    console.error("no child");
+}
 
 TreeBuilder.prototype.onClick = function (node, d) {
     var thiz = this;
@@ -179,15 +226,6 @@ TreeBuilder.prototype.onClick = function (node, d) {
     var cxy = $center.attr("transform");
     if (!d.children) {
         return;
-    }
-
-    function getCleandata(d) {
-        var tmp = {}
-        tmp[thiz.config.label] = d[thiz.config.label];
-        tmp[thiz.config.size] = d[thiz.config.size];
-        tmp.children = d.children;
-        tmp._parent = d._parent ? d._parent : d.parent;
-        return tmp;
     }
 
     node.transition()
@@ -212,15 +250,15 @@ TreeBuilder.prototype.onClick = function (node, d) {
             }
             if (d.max) {
                 if (d._parent) {
+                    thiz.redraw(thiz.getCleandata(d._parent, 1), -1);
                     thiz.config.level -= 1;
-                    thiz.data(getCleandata(d._parent));
-                    if (this.config.levels.length > 0) {
+                    if (thiz.config.levels.length > 0) {
                         thiz.drillup(d);
                     }
                 }
             } else {
-                thiz.data(getCleandata(d));
-                if (this.config.levels.length > 0) {
+                thiz.redraw(thiz.getCleandata(thiz.getChild(d), 0), 1);
+                if (thiz.config.levels.length > 0) {
                     thiz.updateBreadcrumbs(d);
                     thiz.config.level += 1;
                 }

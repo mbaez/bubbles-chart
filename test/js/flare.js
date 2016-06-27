@@ -1,6 +1,27 @@
 var data = {
     "label": "Total",
-    "children": [{
+    "children": [
+        {
+            "year": 2015,
+            "label": "10-RECURSOS DEL TESORO",
+            "amount": 6046299192652,
+            "children": [{
+                "year": 2015,
+                "label": "23 - ENTES AUTÓNOMOS Y AUTÁRQUICOS",
+                "amount": 6046299192652,
+                "children": [{
+                    "year": 2015,
+                    "label": "15 - DIRECCION NACIONAL DE ADUANAS",
+                    "amount": 6046299192652,
+                    "children": [{
+                        "year": 2015,
+                        "label": "1 - ADMINISTRACIÓN GENERAL",
+                        "amount": 6046299192652
+                    }]
+                }]
+            }]
+        },
+        {
             "year": 2014,
             "label": "10-RECURSOS DEL TESORO",
             "amount": 304462081486896,
