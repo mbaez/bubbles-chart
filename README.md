@@ -10,6 +10,7 @@ Test BubbleChart online with JSFiddle
 * [Simple Gauge chart](https://jsfiddle.net/maxibaezpy/q2r8yy7a/)
 * [Wave Gauge chart](https://jsfiddle.net/maxibaezpy/vovz2yku/)
 * [Liquid Gauge chart](https://jsfiddle.net/maxibaezpy/vajb4jg4/)
+* [Bubble Tree](https://jsfiddle.net/maxibaezpy/70a7oe9p/)
 
 
 ## Usage
@@ -82,6 +83,7 @@ The types available are:
 * `none` : simple flat fill.
 * `wave` : wave like fill.
 * `liquid` : animate wave fill.
+* `tree`: orbital bubbles (bubble tree).
 
 #### options[defaultColor]
 Type: `String`
