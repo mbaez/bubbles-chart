@@ -83,10 +83,10 @@ module.exports = function (grunt) {
             },
             libs: {
                 src: [
-                'dist/tmp/bubbles-chart.js',
                 'dist/tmp/layout-orbit.js',
                 'dist/tmp/config-builder.js',
                 'dist/tmp/events.js',
+                'dist/tmp/base-builder.js',
                 'dist/tmp/ui-builder.js',
                 'dist/tmp/bubble-animation.js',
                 'dist/tmp/bubble-builder.js',
@@ -95,7 +95,20 @@ module.exports = function (grunt) {
                 ],
                 dest: 'dist/js/bubbles-chart.min.js'
             },
-
+            /*libsSrc: {
+                src: [
+                'src/js/layout-orbit.js',
+                'src/js/config-builder.js',
+                'src/js/events.js',
+                'src/js/base-builder.js',
+                'src/js/ui-builder.js',
+                'src/js/bubble-animation.js',
+                'src/js/bubble-builder.js',
+                'src/js/tree-builder.js',
+                'src/js/bubbles-chart.js'
+                ],
+                dest: 'dist/js/bubbles-chart.min.js'
+            },*/
             libsfull: {
                 src: [
                 'src/vendors/jquery/dist/jquery.min.js',

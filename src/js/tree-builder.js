@@ -1,7 +1,14 @@
 function TreeBuilder(config) {
     UiBuilder.call(this, config);
     this.rscale = 0;
-    this.initialize();
+    this.center = {
+        node: [],
+        ring: [],
+        idx: 0
+    }
+    if (config) {
+        this.initialize();
+    }
 }
 
 TreeBuilder.prototype = new UiBuilder();
@@ -33,14 +40,16 @@ TreeBuilder.prototype.prepareData = function (data) {
     return data;
 }
 
-
 /**
- * 
+ *
  */
 TreeBuilder.prototype.circle = function (node) {
     var thiz = this;;
 
     function r(d, offset) {
+        if (d.depth > 1) {
+            return;
+        }
         offset = offset ? offset : 0;
         var r = thiz.rscale(d[thiz.config.size]) - offset;
         if (d.max) {
@@ -86,9 +95,9 @@ TreeBuilder.prototype.onChange = function () {
     this.wrapText();
 }
 
-TreeBuilder.prototype.redraw = function (data, step) {
-    var lvl = this.config.level + step;
-    if (lvl > 0) {
+TreeBuilder.prototype.redraw = function (data, storeVal) {
+    var lvl = this.config.level; //+ step;
+    if (storeVal) {
         this.dataArray[lvl] = $.extend({}, data, true);
     } else {
         data = $.extend({}, this.dataArray[lvl], true);
@@ -110,8 +119,8 @@ TreeBuilder.prototype.builder = function (data) {
     var viz = document.getElementById(this.vizId);
     viz.innerHTML = "";
     orbitScale = d3.scale.linear().domain([1, 3]).range([3.8, 1.5]).clamp(true);
-
-    var orbit = d3.layout.orbit().size([this.diameter, this.diameter])
+    var orbit = d3.layout.orbit()
+        .size([this.diameter, this.diameter])
         .children(function (d) {
             return d.children
         })
@@ -122,11 +131,19 @@ TreeBuilder.prototype.builder = function (data) {
             return orbitScale(d.depth)
         });
 
+
     var gdata = this.prepareData(data);
     orbit.nodes(gdata);
 
-    var nodes = d3.select(vizId)
-        .append("svg")
+    var container = $(vizId).find("svg");
+    if (container.length == 0) {
+        container = d3.select(vizId)
+            .append("svg");
+    } else {
+        container = d3.select(vizId).select("svg");
+    }
+
+    var nodes = container
         .selectAll("g.node")
         .data(orbit.nodes())
         .enter()
@@ -188,6 +205,7 @@ TreeBuilder.prototype.builder = function (data) {
         .style("stroke", "black")
         .style("stroke-dasharray", "2,2")
         .style("stroke-width", "1px");
+
 }
 
 TreeBuilder.prototype.getCleandata = function (d, step) {
@@ -200,8 +218,8 @@ TreeBuilder.prototype.getCleandata = function (d, step) {
     if (d.children) {
         tmp.children = $.extend([], d.children, true);
     }
-    var lvl = this.config.level - step;
-    if (lvl > 0 && step > 0 || lvl >= 0 && step == 0) {
+    var lvl = this.config.level;
+    if (lvl >= 0) {
         tmp._parent = $.extend({}, this.dataArray[lvl], true);
     }
     return tmp;
@@ -219,29 +237,82 @@ TreeBuilder.prototype.getChild = function (d) {
     console.error("no child");
 }
 
+/**
+ * Handler del evento click asociado a cada nodo.
+ */
 TreeBuilder.prototype.onClick = function (node, d) {
-    var thiz = this;
-    var $center = d3.select(".node.center");
-    var cr = $center.select("circle.shape").attr("r");
-    var cxy = $center.attr("transform");
     if (!d.children) {
+        return;
+    } else if (!d.parent && !d._parent) {
         return;
     }
 
-    node.transition()
+    var $center = d3.select(".node.center");
+    var cr = $center.select("circle.shape").attr("r");
+    var cxy = $center.attr("transform");
+    this.animateRingNode(node, d, {
+        cr: cr,
+        cxy: cxy
+    });
+}
+
+/**
+ * Maneja el drill up del las burbujas del anillo
+ */
+TreeBuilder.prototype.ringDrillup = function (d) {
+    this.config.level -= 1;
+    var tmp = this.getCleandata(d._parent);
+    this.redraw(tmp);
+    if (this.config.levels.length > 0) {
+        this.drillup(d);
+    }
+
+}
+
+/**
+ * Maneja el drill down del las burbujas del anillo
+ */
+TreeBuilder.prototype.ringDrilldown = function (d) {
+    var tmp = this.getCleandata(this.getChild(d));
+    if (this.config.levels.length > 0 && this.config.levels.length > this.config.level + 1) {
+        this.updateBreadcrumbs(d);
+        this.config.level += 1;
+    }
+    this.redraw(tmp, true);
+}
+
+/**
+ * Implementa la transición básica de los elementos.
+ */
+TreeBuilder.prototype.transition = function (node, transform, end) {
+    return node.transition()
         .duration(this.config.tree.speed)
         .ease('linear')
-        .attr('transform', cxy)
+        .attr("transform", transform)
         .attr('T', 1)
-        .each('end', function () {
-            node.attr('T', 0);
+        .each('end', function (d) {
+            d3.select(this).attr('T', 0);
+            if (end) {
+                end(this, d);
+            }
         });
+}
 
+
+/**
+ * Maneja las transiciones del nodo perteneciente al anillo de la burbuja.
+ */
+TreeBuilder.prototype.animateRingNode = function (node, pd, options) {
+    var thiz = this;
+    //transición del nodo desde su ubicación actual al centro.
+    this.transition(node, options.cxy);
+    // transición  que modifica el tamaño del radio del nodo para
+    // que sea igual al del nodo central.
     node.select(".shape")
         .transition()
         .duration(this.config.tree.speed)
         .ease('linear')
-        .attr("r", cr)
+        .attr("r", options.cr)
         .attr('T', 1)
         .each('end', function (d) {
             node.select(".shape").attr('T', 0);
@@ -250,18 +321,10 @@ TreeBuilder.prototype.onClick = function (node, d) {
             }
             if (d.max) {
                 if (d._parent) {
-                    thiz.redraw(thiz.getCleandata(d._parent, 1), -1);
-                    thiz.config.level -= 1;
-                    if (thiz.config.levels.length > 0) {
-                        thiz.drillup(d);
-                    }
+                    thiz.ringDrillup(d);
                 }
             } else {
-                thiz.redraw(thiz.getCleandata(thiz.getChild(d), 0), 1);
-                if (thiz.config.levels.length > 0) {
-                    thiz.updateBreadcrumbs(d);
-                    thiz.config.level += 1;
-                }
+                thiz.ringDrilldown(d);
             }
         });
 }
