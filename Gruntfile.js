@@ -91,6 +91,7 @@ module.exports = function (grunt) {
                 'dist/tmp/bubble-animation.js',
                 'dist/tmp/bubble-builder.js',
                 'dist/tmp/tree-builder.js',
+                'dist/tmp/orbit-builder.js',
                 'dist/tmp/bubbles-chart.js'
                 ],
                 dest: 'dist/js/bubbles-chart.min.js'

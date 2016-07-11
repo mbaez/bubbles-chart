@@ -25,16 +25,26 @@ UiBuilder.prototype.prepareContainer = function () {
     this.config.scope = this.config.container.replace("#", "");
     this.vizId = this.config.scope + "-viz";
     this.footerId = this.config.scope + "-footer";
+    this.headerId = this.config.scope + "-header";
+
+    var $header = $("<div />");
+    $header.attr("id", this.headerId);
+
     var $viz = $("<div />");
     $viz.attr("id", this.vizId);
 
     var $footer = $("<div />");
     $footer.attr("id", this.footerId);
 
+    $(this.config.container).addClass("bubble-chart");
+    $viz.addClass("bubble-viz");
+
+    $(this.config.container).append($header);
     $(this.config.container).append($viz);
     $(this.config.container).append($footer);
 
-    $(this.config.container).height(this.diameter);
+    $viz.height(this.diameter);
+    $viz.width(this.diameter);
 }
 
 
@@ -49,8 +59,9 @@ UiBuilder.prototype.text = function (node, options) {
         return rgb.r >= dc && rgb.g >= dc && rgb.b >= dc;
     }
 
+    var type = typeof options !== "undefined" && typeof options.type !== "undefined" ? options.type : "text";
     var thiz = this;
-    return node.append("text")
+    return node.append(type)
         .attr("class", "wrap")
         .style("fill", function (d) {
             var c = thiz.config.color(d[thiz.config.label]);
@@ -273,12 +284,12 @@ UiBuilder.prototype.onChange = function () {
  */
 UiBuilder.prototype.timeline = function () {
     // create lists
-    $("#" + this.footerId).html("");
-    var ul = d3.select("#" + this.footerId)
+    $("#" + this.headerId).html("");
+    var ul = d3.select("#" + this.headerId)
         .append('ul')
         .attr("class", "timeline")
         .attr('tabindex', 1);
-    
+
     var thiz = this;
     var time = this.timeArray.sort().map(function (d) {
         var data = {

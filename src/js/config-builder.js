@@ -40,8 +40,8 @@ function ConfigBuilder() {
             count: 4
         },
         tree: {
-            speed: 250,
-            minRadius: 20,
+            speed: 200,
+            minRadius: 10,
         },
         animation: {
             speed: 3000,

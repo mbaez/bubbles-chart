@@ -17,7 +17,7 @@ BubbleBuilder.prototype.constructor = BubbleBuilder;
 BubbleBuilder.prototype.builder = function (data) {
     var thiz = this;
     var bubble = d3.layout.pack()
-        .size([this.width, this.diameter])
+        .size([this.diameter, this.diameter])
         .padding(1.5);
 
     if (this.config.sort) {
@@ -102,7 +102,7 @@ BubbleBuilder.prototype.fillPercentage = function (d) {
 }
 
 /**
- * Build a wave path 
+ * Build a wave path
  */
 BubbleBuilder.prototype.buildWave = function (clip) {
     var thiz = this;
