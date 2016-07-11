@@ -139,13 +139,13 @@ OrbitBuilder.prototype.onClick = function (node, d) {
  */
 OrbitBuilder.prototype.animateRingNode = function (node, pd, options) {
     var thiz = this;
-    //transición del nodo desde su ubicación actual al centro.
-
     if (pd.max) {
+        options.cr = this.config.tree.minRadius;
         this.transition(node, function (d) {
             return "translate ( " + (d.x * 2) + "," + d.y + ")";
         });
     } else {
+        //transición del nodo desde su ubicación actual al centro.
         this.transition(node, options.cxy);
     }
     // transición  que modifica el tamaño del radio del nodo para
@@ -190,7 +190,7 @@ OrbitBuilder.prototype.animateCenterNode = function ($center, pd) {
             return "translate(" + (pd.x) + "," + pd.y + ")";
         }, function () {
             tmp.remove();
-        })
+        });
 
     } else {
         this.transition($center, function (d) {
