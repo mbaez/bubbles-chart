@@ -103,6 +103,7 @@ d3.layout.orbit = function () {
         flattenedNodes.push(orbitNodes);
 
         traverseNestedData(orbitNodes)
+        var level = 0;
 
         function traverseNestedData(_node) {
             var target = childrenAccessor(_node);
@@ -118,7 +119,6 @@ d3.layout.orbit = function () {
                     y: _node.y,
                     r: _node.ring / 2
                 });
-
                 for (var x = 0; x < target.length; x++) {
 
                     target[x].angle = ((piedValues[x].endAngle - piedValues[x].startAngle) / 2) + piedValues[x].startAngle;
@@ -140,7 +140,9 @@ d3.layout.orbit = function () {
                     target[x].ring = childrenAccessor(_node)[x].parent.ring / orbitDepthAdjust(_node);
 
                     flattenedNodes.push(target[x]);
-                    //traverseNestedData(target[x]);
+                    if (target[x].depth <= 1) {
+                        //traverseNestedData(target[x]);
+                    }
                 }
             }
         }

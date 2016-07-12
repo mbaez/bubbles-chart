@@ -284,8 +284,13 @@ UiBuilder.prototype.onChange = function () {
  */
 UiBuilder.prototype.timeline = function () {
     // create lists
-    $("#" + this.headerId).html("");
-    var ul = d3.select("#" + this.headerId)
+    var timeId = this.config.timeContainer == "header" ? this.headerId : this.footerId;
+    timeId = "#" + timeId;
+
+    console.log(this.config.timeContainer);
+
+    $(timeId).html("");
+    var ul = d3.select(timeId)
         .append('ul')
         .attr("class", "timeline")
         .attr('tabindex', 1);

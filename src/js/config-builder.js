@@ -40,13 +40,14 @@ function ConfigBuilder() {
             count: 4
         },
         tree: {
-            speed: 200,
+            speed: 150,
             minRadius: 10,
         },
         animation: {
             speed: 3000,
             method: "no-recursive"
         },
+        timeContainer: "footer",
         format: {
             text: function (text, key) {
                 return d3plus.string.title(text);

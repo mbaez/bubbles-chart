@@ -6,7 +6,8 @@ function OrbitBuilder(config) {
         ring: [],
         idx: 0
     }
-    this.initialize();
+
+    //this.initialize();
 }
 
 OrbitBuilder.prototype = new TreeBuilder();
@@ -135,40 +136,128 @@ OrbitBuilder.prototype.onClick = function (node, d) {
 
 
 /**
+ * Se encarga de rotar en relación al anillo central.
+ */
+OrbitBuilder.prototype.orbitRotate = function (node, pd, options) {
+    //node.attr
+    var ring = d3.select(".ring");
+    var x = parseFloat(ring.attr("cx"));
+    var y = parseFloat(ring.attr("cy"));
+    var r = parseFloat(ring.attr("r"));
+    node.attr("transform", options.cxy);
+    var shape = node.select(".shape")
+        .attr("cx", function (d) {
+            return d.x - x;
+        })
+        .attr("cy", function (d) {
+            return d.y - y;
+        });
+
+    var thiz = this;
+
+    function angle(d) {
+        var yi = pd.y - (y - r);
+        var xi = pd.x - (x - r)
+
+        var yc = r;
+        var xc = r;
+
+        var dx = xi - xc;
+        var dy = yc - yi;
+        //Math.atan((p1y - p2y) / (p2x - p1x)) * (180 / Math.PI);
+        var a = Math.atan2(dy, dx) * (180 / Math.PI);
+        //console.log(a);
+        return a < 0 ? a - 180 : a;
+    }
+
+    var speed = this.config.tree.speed / 2;
+    shape.transition()
+        .duration(speed)
+        .ease('cubic')
+        .delay(function (d, i) {
+            return i * 120;
+        })
+        .attrTween("transform", function (d, i) {
+            var ai = angle(d);
+            console.log("angulo:", ai);
+            var i = d3.interpolate(0, ai);
+            return function (t) {
+                return "rotate(" + i(t) + ")";
+            };
+        })
+        .each("end", function () {
+            var ctr = node.attr("transform");
+            ctr = ctr.split(";");
+            console.log(ctr);
+            node.select(".shape")
+                .transition()
+                .duration(speed)
+                .ease('linear')
+                .attr("cy", function (d) {
+                    var cr = d.r < thiz.config.tree.minRadius ? thiz.config.tree.minRadius : d.r;
+                    //se utiliza 3 offset, uno por cada elemento(y, r, dr)
+                    return y - r - cr - 3 * thiz.config.offset;
+                    //return d.x0
+                })
+                .attr('T', 1)
+                .each("end", function () {
+                    d3.select(this).attr('T', 0);
+                    options.end(node, speed);
+                });
+        });
+
+}
+
+
+/**
  * Maneja las transiciones del nodo perteneciente al anillo de la burbuja.
  */
 OrbitBuilder.prototype.animateRingNode = function (node, pd, options) {
     var thiz = this;
+
+    // transición  que modifica el tamaño del radio del nodo para
+    // que sea igual al del nodo central.
+    function reshape(node, speed) {
+        speed = speed ? speed : thiz.config.tree.speed;
+        node.select(".shape")
+            .transition()
+            .duration(speed)
+            .ease('linear')
+            .attr("r", options.cr)
+            .attr('T', 1)
+            .each('end', function (d) {
+                node.select(".shape").attr('T', 0);
+                if (!d.children) {
+                    return;
+                }
+                if (d.max) {
+                    if (d._parent) {
+                        thiz.ringDrillup(d);
+                    }
+                } else {
+                    thiz.ringDrilldown(d);
+                }
+            });
+    }
+
     if (pd.max) {
+        //del nodo central hacia la derecha
         options.cr = this.config.tree.minRadius;
         this.transition(node, function (d) {
             return "translate ( " + (d.x * 2) + "," + d.y + ")";
+        }, function () {
+            reshape(node);
         });
     } else {
+        //options.end();
+        //reshape(node);
+        options.end = function (node, speed) {
+            reshape(node, speed);
+        }
+
         //transición del nodo desde su ubicación actual al centro.
-        this.transition(node, options.cxy);
+        this.orbitRotate(node, pd, options);
     }
-    // transición  que modifica el tamaño del radio del nodo para
-    // que sea igual al del nodo central.
-    node.select(".shape")
-        .transition()
-        .duration(this.config.tree.speed)
-        .ease('linear')
-        .attr("r", options.cr)
-        .attr('T', 1)
-        .each('end', function (d) {
-            node.select(".shape").attr('T', 0);
-            if (!d.children) {
-                return;
-            }
-            if (d.max) {
-                if (d._parent) {
-                    thiz.ringDrillup(d);
-                }
-            } else {
-                thiz.ringDrilldown(d);
-            }
-        });
 }
 
 function d3Clone(node) {
@@ -185,7 +274,6 @@ OrbitBuilder.prototype.animateCenterNode = function ($center, pd) {
             thiz.center.idx = 0;
             return;
         }
-
         this.transition(d3.select(tmp), function (d) {
             return "translate(" + (pd.x) + "," + pd.y + ")";
         }, function () {
@@ -201,7 +289,7 @@ OrbitBuilder.prototype.animateCenterNode = function ($center, pd) {
             var $ring = d3.select(vizId).selectAll(".ring")
                 .attr("cx", 0)
                 .attr("r", function (d) {
-                    return d.r * 1.3;
+                    return d.r * 1.4;
                 })
                 .attr("cy", function (d) {
                     return d.y;
