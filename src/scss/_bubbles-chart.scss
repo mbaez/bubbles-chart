@@ -6,6 +6,15 @@ $text_color: #444444;
 $time_hover:#f1f1f1;
 $gray_color:#ddd;
 .bubble-chart {
+    .axis path,
+    .axis line {
+        fill: none;
+        stroke: $gray_color;
+        shape-rendering: crispEdges;
+    }
+    .tick text {
+        fill: $text_color;
+    }
     .bubble-viz {
         margin-left: auto;
         margin-right: auto;

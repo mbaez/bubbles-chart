@@ -16,6 +16,8 @@ function BubbleChart(options) {
         this.builder = new TreeBuilder(this.config);
     } else if (this.config.type == "orbit") {
         this.builder = new OrbitBuilder(this.config);
+    } else if (this.config.type == "list") {
+        this.builder = new ListBuilder(this.config);
     } else {
         this.builder = new BubbleBuilder(this.config);
     }

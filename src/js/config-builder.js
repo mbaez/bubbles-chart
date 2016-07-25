@@ -48,6 +48,11 @@ function ConfigBuilder() {
             method: "no-recursive"
         },
         timeContainer: "footer",
+        listBubble: {
+            minRadius: 2,
+            maxRadius: 25,
+            padding: 5
+        },
         format: {
             text: function (text, key) {
                 return d3plus.string.title(text);
