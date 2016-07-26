@@ -134,6 +134,33 @@ OrbitBuilder.prototype.onClick = function (node, d) {
     });
 }
 
+/**
+ * Build a svg text node.
+ */
+OrbitBuilder.prototype.text = function (node, options) {
+
+    function isLikeWhite(c) {
+        var dc = 235;
+        var rgb = d3.rgb(c);
+        return rgb.r >= dc && rgb.g >= dc && rgb.b >= dc;
+    }
+
+    var type = typeof options !== "undefined" && typeof options.type !== "undefined" ? options.type : "text";
+    var thiz = this;
+    return node.append(type)
+        .attr("class", "wrap")
+        .style("fill", function (d) {
+            var c = thiz.config.color(d[thiz.config.label]);
+            c = d3plus.color.text(c);
+            if (isLikeWhite(c)) {
+                return thiz.config.defaultColor;
+            }
+            return c;
+        })
+        .text(function (d) {
+            return thiz.config.format.number(d[thiz.config.size]);
+        });
+}
 
 /**
  * Se encarga de rotar en relación al anillo central.
