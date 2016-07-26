@@ -3,6 +3,7 @@ function BaseBuilder(config) {
     this.dataArray = [];
     this.timeArray = [];
     this.timeSelection = [];
+    this.filters = {};
     this.config = config;
 }
 
@@ -56,8 +57,24 @@ BaseBuilder.prototype.buildNodes = function (data, filter) {
     var gdata = {
         children: d
     }
-
     return gdata;
+}
+
+BaseBuilder.prototype.roolupFilters = function (v, attr) {
+    var plainFilters = this.config.filters.map(function (e) {
+        return e.value;
+    });
+    if (plainFilters.indexOf(attr) == -1) {
+        return;
+    }
+
+    this.filters[attr] = typeof this.filters[attr] == "undefined" ? [] : this.filters[attr];
+    var thiz = this;
+    v.forEach(function (d) {
+        if (thiz.filters[attr].indexOf(d[attr]) == -1) {
+            thiz.filters[attr].push(d[attr]);
+        }
+    })
 }
 
 /**
@@ -67,6 +84,7 @@ BaseBuilder.prototype.roolup = function (v, sample) {
     var data = {};
     var thiz = this;
     for (var attr in sample) {
+        this.roolupFilters(v, attr);
         if (attr == this.config.time) {
             data[attr] = v.map(function (d) {
                 if (thiz.timeArray.indexOf(d[attr]) == -1) {
@@ -78,6 +96,13 @@ BaseBuilder.prototype.roolup = function (v, sample) {
             data[attr] = v[0][attr];
         } else if (typeof sample[attr] == "number") {
             data[attr] = d3.sum(v, function (d) {
+                return d[attr];
+            });
+        } else if (attr == this.config.size) {
+            data[attr] = d3.sum(v, function (d) {
+                if (typeof d[attr] !== "number") {
+                    return parseFloat(d[attr]);
+                }
                 return d[attr];
             });
         } else if (attr == "children") {

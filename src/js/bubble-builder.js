@@ -41,25 +41,12 @@ BubbleBuilder.prototype.builder = function (data) {
             }))
         .enter().append("g")
         .attr("class", "node")
-        .on('click', function (d) {
-            thiz.trigger("click", d);
-        })
-        .on('mouseenter', function (d) {
-            thiz.trigger("mouseenter", d);
-        })
-        .on('mouseover', function (d) {
-            thiz.trigger("mouseover", d);
-            d3.select(this).attr("stroke-width", "5px");
-            thiz.createTooltip(this, d);
-        })
-        .on('mouseout', function (d) {
-            thiz.trigger("mouseout", d);
-            d3.select(this).attr("stroke-width", "1px");
-            d3plus.tooltip.remove(thiz.config.scope + "_visualization_focus");
-        })
         .attr("transform", function (d) {
             return "translate(" + d.x + "," + d.y + ")";
         });
+
+    //se añaden los eventossobre el node
+    this.bindMouseEvents(node);
 
     var gnode = node.append("g");
     var main = this.circle(gnode)
