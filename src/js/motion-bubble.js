@@ -106,7 +106,8 @@ MotionBubble.prototype.calculateFilterCenter = function () {
                 dx: dx,
                 dy: dy,
                 row: row,
-                idx: idx
+                idx: idx,
+                nrows: nrows
             }
             idx += 1;
         }
@@ -272,28 +273,29 @@ MotionBubble.prototype.displayFilters = function (attr) {
     var data = d3.keys(this.filterCenters[attr]);
     var filers = d3.select("#" + this.vizId)
         .select("svg")
-        .selectAll(".filers")
+        .selectAll(".filters")
         .data(data)
         .enter()
         .append("text")
-        .attr("class", "filers")
+        .attr("class", "filters")
         .attr("x", function (d) {
             var dt = thiz.filterCenters[attr][d];
-            var x = dt.idx == 1 ? dt.dx * 0.3 : dt.x // - dt.dx * 0.5;
+            var x = dt.idx == 1 ? dt.dx * 0.5 : dt.x;
             x = dt.idx == thiz.config.cols ? dt.x + dt.dx * 0.5 : x;
             return x;
         }).attr("y", function (d) {
             var dt = thiz.filterCenters[attr][d];
-            return dt.y;
+            var y = dt.row == 0 ? dt.dy * 0.5 : dt.y + dt.dy * 0.3;
+            y = dt.row == dt.nrows ? dt.y + dt.dy * 0.5 : y;
+            return y;
         })
         .attr("text-anchor", "middle")
         .text(function (d) {
-
             return thiz.config.format.text(d);
         });
 };
 
 MotionBubble.prototype.hideFilters = function () {
     d3.select("#" + this.vizId)
-        .selectAll(".filers").remove();
+        .selectAll(".filters").remove();
 };
