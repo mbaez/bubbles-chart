@@ -119,6 +119,36 @@ MotionBubble.prototype.calculateFilterCenter = function () {
     $svg.height(newH + ypadding * 2);
 }
 
+
+
+/**
+ * Se sobrescribe el método rollup del base builder
+ */
+MotionBubble.prototype.roolup = function (v, sample) {
+    var data = {};
+    var thiz = this;
+    for (var attr in sample) {
+        this.roolupFilters(v, attr);
+        for (var i = 0; i < v.length; i++) {
+            if (attr == this.config.time) {
+                data[attr] = v.map(function (d) {
+                    if (thiz.timeArray.indexOf(d[attr]) == -1) {
+                        thiz.timeArray.push(d[attr]);
+                    }
+                    return d[attr];
+                });
+            } else if (attr == this.config.size) {
+                data[attr] = d3.sum(v, function (d) {
+                    return d[attr];
+                });
+            } else {
+                data[attr] = v[0][attr];
+            }
+        }
+    }
+    return data;
+}
+
 /**
  * Se encarga de preprocesar a los datos
  */
@@ -281,7 +311,7 @@ MotionBubble.prototype.displayFilters = function (attr) {
         .attr("x", function (d) {
             var dt = thiz.filterCenters[attr][d];
             var x = dt.idx == 1 ? dt.dx * 0.5 : dt.x;
-            x = dt.idx == thiz.config.cols ? dt.x + dt.dx * 0.5 : x;
+            x = dt.idx == thiz.config.cols ? dt.x + dt.dx * 0.3 : x;
             return x;
         }).attr("y", function (d) {
             var dt = thiz.filterCenters[attr][d];
