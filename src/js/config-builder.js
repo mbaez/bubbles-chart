@@ -31,6 +31,7 @@ function ConfigBuilder() {
         tooltip: false,
         level: 0,
         levels: [],
+        filters: [],
         toggle: {
             title: "",
             size: false
@@ -47,6 +48,11 @@ function ConfigBuilder() {
             speed: 3000,
             method: "no-recursive"
         },
+        bubble: {
+            minRadius: 10,
+        },
+        cols: 5,
+        p: 0.3,
         timeContainer: "footer",
         listBubble: {
             minRadius: 2,

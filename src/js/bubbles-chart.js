@@ -18,6 +18,8 @@ function BubbleChart(options) {
         this.builder = new OrbitBuilder(this.config);
     } else if (this.config.type == "list") {
         this.builder = new ListBuilder(this.config);
+    } else if (this.config.type == "motion") {
+        this.builder = new MotionBubble(this.config);
     } else {
         this.builder = new BubbleBuilder(this.config);
     }

@@ -19,8 +19,6 @@ MotionBubble.prototype.circle = function (node) {}
  */
 MotionBubble.prototype.prepareContainer = function () {
     UiBuilder.prototype.prepareContainer.call(this);
-
-    console.log(this.width);
     var $viz = $("#" + this.vizId);
     $viz.width(this.width);
 
@@ -30,6 +28,94 @@ MotionBubble.prototype.prepareContainer = function () {
     };
     this.damper = 0.1;
     this.layoutGravity = -0.01;
+}
+
+MotionBubble.prototype.buildFilter = function () {
+    var filters = [];
+    if (this.config.filters.length > 0) {
+        filters.push({
+            text: "Todos",
+            value: "all"
+        });
+        filters = filters.concat(this.config.filters);
+    }
+    var container = this.headerId;
+    var $footer = $("#" + container);
+    var $toogle = $("<div></div>");
+    $toogle.addClass("bubble-toogle");
+    $toogle.attr("id", container + "-toogle");
+    $footer.append($toogle);
+    var thiz = this;
+    var toggle = d3plus.form()
+        .data(filters)
+        .container("#" + container + "-toogle")
+        .id("value")
+        .text("text")
+        .type("toggle")
+        .draw();
+
+    $footer.find(".d3plus_toggle").on("click", function (d) {
+        var $target = $(this)[0];
+        var data = $target["__data__"];
+        if (typeof data != "undefined") {
+            if (data.value !== "all") {
+                thiz.groupAll(thiz.circles, data.value);
+            } else {
+                thiz.groupAll(thiz.circles);
+            }
+        }
+    });
+}
+
+/**
+ * Se encarga de calcular el centro de los filtros
+ */
+MotionBubble.prototype.calculateFilterCenter = function () {
+    this.filterCenters = {};
+    var cols = this.config.cols;
+    var p = this.config.p;
+    var xpadding = 100;
+    var ypadding = 50;
+    var newH = this.diameter;
+    for (var attr in this.filters) {
+        this.filterCenters[attr] = {};
+        var len = this.filters[attr].length;
+        cols = this.config.cols;
+        cols = len < cols ? len : cols;
+        var nrows = parseInt(len / cols);
+        nrows = nrows == 1 ? 2 : nrows;
+        var dx = (this.width - xpadding) / cols;
+        var dy = (this.diameter - ypadding) / nrows;
+        var idx = 1;
+        for (var i = 0; i < len; i++) {
+            var strTmp = this.filters[attr][i];
+            // se calcula la y
+            var row = parseInt(i / cols);
+            var y = dy * (row + 1);
+            y = row == nrows ? y - dy * p : y;
+            //se calcula la x
+            idx = idx > cols ? 1 : idx;
+            var x = dx * idx;
+            x = idx == 1 ? dx * (1 - p) : x;
+            x = idx == cols ? x - dx * p : x;
+            //se actualiza el heigth
+            newH = y;
+            this.filterCenters[attr][strTmp] = {
+                x: x,
+                y: y,
+                dx: dx,
+                dy: dy,
+                row: row,
+                idx: idx
+            }
+            idx += 1;
+        }
+    }
+    //se redimensiona el container
+    var $viz = $("#" + this.vizId);
+    var $svg = $viz.find("svg");
+    $viz.height(newH + ypadding * 2);
+    $svg.height(newH + ypadding * 2);
 }
 
 /**
@@ -70,39 +156,7 @@ MotionBubble.prototype.buildNodes = function (data, filter) {
         return b[thiz.config.size] - a[thiz.config.size];
     });
 
-    this.filterCenters = {};
-    var cols = 4;
-    var xpadding = 100;
-    var ypadding = 50;
-    for (var attr in this.filters) {
-        this.filterCenters[attr] = {};
-        var len = this.filters[attr].length;
-        var nrows = Math.round(len / cols);
-        var dx = (this.width - xpadding) / cols;
-        var dy = (this.diameter - ypadding) / nrows;
-        var idx = 1;
-        var p = 0.3;
-        for (var i = 0; i < len; i++) {
-            var strTmp = this.filters[attr][i];
-            // se calcula la y
-            var row = Math.round(i / cols);
-            var y = dy * (row + 1);
-            //y = row == 0 ? dy * (1 - p) : y;
-            y = row == nrows ? y - dy * p : y;
-            //se calcula la x
-            idx = idx > cols ? 1 : idx;
-            var x = dx * idx;
-            x = idx == 1 ? dx * (1 - p) : x;
-            x = idx == cols ? x - dx * p : x;
-            idx += 1;
-            this.filterCenters[attr][strTmp] = {
-                x: x,
-                y: y,
-                dx: dx,
-                dy: dy
-            }
-        }
-    }
+    this.calculateFilterCenter();
     return darray;
 }
 
@@ -115,7 +169,7 @@ MotionBubble.prototype.builder = function (data) {
         .append("svg")
         .attr("width", this.width)
         .attr("height", this.diameter);
-
+    this.buildFilter();
     var thiz = this;
     this.nodes = this.buildNodes(data);
     this.circles = svg
@@ -176,6 +230,7 @@ MotionBubble.prototype.tickNodes = function (e, moveCallback) {
 
 MotionBubble.prototype.groupAll = function (nodes, filter) {
     var thiz = this;
+    thiz.hideFilters();
     this.force
         .gravity(this.layoutGravity)
         .charge(this.charge)
@@ -212,8 +267,6 @@ MotionBubble.prototype.moveTowardsFilter = function (alpha, filter) {
 }
 
 
-
-
 MotionBubble.prototype.displayFilters = function (attr) {
     var thiz = this;
     var data = d3.keys(this.filterCenters[attr]);
@@ -226,18 +279,21 @@ MotionBubble.prototype.displayFilters = function (attr) {
         .attr("class", "filers")
         .attr("x", function (d) {
             var dt = thiz.filterCenters[attr][d];
-            return dt.x - dt.dx * 0.3;
+            var x = dt.idx == 1 ? dt.dx * 0.3 : dt.x // - dt.dx * 0.5;
+            x = dt.idx == thiz.config.cols ? dt.x + dt.dx * 0.5 : x;
+            return x;
         }).attr("y", function (d) {
             var dt = thiz.filterCenters[attr][d];
             return dt.y;
         })
         .attr("text-anchor", "middle")
         .text(function (d) {
-            return d;
+
+            return thiz.config.format.text(d);
         });
 };
 
-MotionBubble.prototype.hide_years = function () {
-    var years;
-    return years = this.vis.selectAll(".years").remove();
+MotionBubble.prototype.hideFilters = function () {
+    d3.select("#" + this.vizId)
+        .selectAll(".filers").remove();
 };
