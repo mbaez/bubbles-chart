@@ -90,6 +90,7 @@ ListBuilder.prototype.buildFilter = function () {
         var data = $target["__data__"];
         if (typeof data != "undefined") {
             thiz.activeFilters[data.attr] = data.value;
+            console.log(thiz.activeFilters);
             thiz.builder(thiz.pData);
         }
     });
@@ -244,6 +245,35 @@ ListBuilder.prototype.scale = function (data) {
         .range([this.config.listBubble.minRadius, this.config.listBubble.maxRadius]);
 }
 
+ListBuilder.prototype.filtrar = function (data) {
+    var thiz = this;
+    var result = [];
+    for (var i = 0; i < data.length; i++) {
+        var tmp = [];
+        for (var j = 0; j < data[i].values.length; j++) {
+            var d = data[i].values[j];
+            var show = true;
+            for (filter in thiz.activeFilters) {
+                show = show && (d[filter] == thiz.activeFilters[filter]);
+            }
+            if (show) {
+                tmp.push(d);
+            }
+        }
+
+        if (tmp.length > 0) {
+            var d = $.extend({}, data[i], true);
+            d.values = tmp;
+            for (filter in thiz.activeFilters) {
+                d[filter] = thiz.activeFilters[filter];
+            }
+            result.push(d);
+        }
+    }
+
+    return result;
+}
+
 /**
  * Build the visualization
  */
@@ -251,17 +281,7 @@ ListBuilder.prototype.builder = function (data) {
     var index = 0;
     var thiz = this;
     var fData = $.extend([], data, true);
-    fData = fData.filter(function (d) {
-        var vals = d.values.filter(function (d) {
-            var show = true;
-            for (filter in thiz.activeFilters) {
-                show = show && (d[filter] == thiz.activeFilters[filter]);
-            }
-            return show;
-        });
-        return vals.length > 0;
-    });
-
+    fData = this.filtrar(fData);
     d3.select("#" + this.vizId).selectAll("svg").remove();
     var svg = d3.select("#" + this.vizId)
         .append("svg")

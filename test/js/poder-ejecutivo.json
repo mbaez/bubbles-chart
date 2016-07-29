@@ -3,7 +3,7 @@ var data = [{
         "mes": 9,
         "entidad": "Vicepresidencia de la República",
         "nivel_entidad": "PODER EJECUTIVO",
-        "cantidad": 1
+        "cantidad": 6
 }, {
         "anio": "2015",
         "mes": 11,
@@ -1451,4 +1451,1385 @@ var data = [{
         "entidad": "Ministerio Público",
         "nivel_entidad": "PODER JUDICIAL",
         "cantidad": 31
+    }, {
+        "anio": "2016",
+        "mes": 9,
+        "entidad": "Vicepresidencia de la República",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 1
+}, {
+        "anio": "2016",
+        "mes": 11,
+        "entidad": "Ministerio de Agricultura y Ganadería",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 37
+}, {
+        "anio": "2016",
+        "mes": 7,
+        "entidad": "Ministerio de Agricultura y Ganadería",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 9
+}, {
+        "anio": "2016",
+        "mes": 4,
+        "entidad": "Ministerio de Agricultura y Ganadería",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 2
+}, {
+        "anio": "2016",
+        "mes": 6,
+        "entidad": "Ministerio de Agricultura y Ganadería",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 7
+}, {
+        "anio": "2016",
+        "mes": 8,
+        "entidad": "Ministerio de Agricultura y Ganadería",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 11
+}, {
+        "anio": "2016",
+        "mes": 9,
+        "entidad": "Ministerio de Agricultura y Ganadería",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 10
+}, {
+        "anio": "2016",
+        "mes": 5,
+        "entidad": "Ministerio de Agricultura y Ganadería",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 5
+}, {
+        "anio": "2016",
+        "mes": 10,
+        "entidad": "Ministerio de Agricultura y Ganadería",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 11
+}, {
+        "anio": "2016",
+        "mes": 12,
+        "entidad": "Ministerio de Agricultura y Ganadería",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 76
+}, {
+        "anio": "2016",
+        "mes": 10,
+        "entidad": "Ministerio de Defensa Nacional",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 103
+}, {
+        "anio": "2016",
+        "mes": 11,
+        "entidad": "Ministerio de Defensa Nacional",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 74
+}, {
+        "anio": "2016",
+        "mes": 5,
+        "entidad": "Ministerio de Defensa Nacional",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 60
+}, {
+        "anio": "2016",
+        "mes": 9,
+        "entidad": "Ministerio de Defensa Nacional",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 44
+}, {
+        "anio": "2016",
+        "mes": 8,
+        "entidad": "Ministerio de Defensa Nacional",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 110
+}, {
+        "anio": "2016",
+        "mes": 4,
+        "entidad": "Ministerio de Defensa Nacional",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 69
+}, {
+        "anio": "2016",
+        "mes": 2,
+        "entidad": "Ministerio de Defensa Nacional",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 27
+}, {
+        "anio": "2016",
+        "mes": 6,
+        "entidad": "Ministerio de Defensa Nacional",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 81
+}, {
+        "anio": "2016",
+        "mes": 1,
+        "entidad": "Ministerio de Defensa Nacional",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 8
+}, {
+        "anio": "2016",
+        "mes": 4,
+        "entidad": "Ministerio de Educación y Cultura",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 7
+}, {
+        "anio": "2016",
+        "mes": 5,
+        "entidad": "Ministerio de Educación y Cultura",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 1
+}, {
+        "anio": "2016",
+        "mes": 10,
+        "entidad": "Ministerio de Educación y Cultura",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 22
+}, {
+        "anio": "2016",
+        "mes": 7,
+        "entidad": "Ministerio de Educación y Cultura",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 7
+}, {
+        "anio": "2016",
+        "mes": 3,
+        "entidad": "Ministerio de Educación y Cultura",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 5
+}, {
+        "anio": "2016",
+        "mes": 2,
+        "entidad": "Ministerio de Educación y Cultura",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 9
+}, {
+        "anio": "2016",
+        "mes": 9,
+        "entidad": "Ministerio de Educación y Cultura",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 12
+}, {
+        "anio": "2016",
+        "mes": 8,
+        "entidad": "Ministerio de Educación y Cultura",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 6
+}, {
+        "anio": "2016",
+        "mes": 12,
+        "entidad": "Ministerio de Educación y Cultura",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 23
+}, {
+        "anio": "2016",
+        "mes": 6,
+        "entidad": "Ministerio de Educación y Cultura",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 5
+}, {
+        "anio": "2016",
+        "mes": 1,
+        "entidad": "Ministerio de Educación y Cultura",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 26
+}, {
+        "anio": "2016",
+        "mes": 11,
+        "entidad": "Ministerio de Educación y Cultura",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 30
+}, {
+        "anio": "2016",
+        "mes": 3,
+        "entidad": "Ministerio de Hacienda",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 15
+}, {
+        "anio": "2016",
+        "mes": 9,
+        "entidad": "Ministerio de Hacienda",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 5
+}, {
+        "anio": "2016",
+        "mes": 2,
+        "entidad": "Ministerio de Hacienda",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 13
+}, {
+        "anio": "2016",
+        "mes": 12,
+        "entidad": "Ministerio de Hacienda",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 29
+}, {
+        "anio": "2016",
+        "mes": 6,
+        "entidad": "Ministerio de Hacienda",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 15
+}, {
+        "anio": "2016",
+        "mes": 5,
+        "entidad": "Ministerio de Hacienda",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 23
+}, {
+        "anio": "2016",
+        "mes": 11,
+        "entidad": "Ministerio de Hacienda",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 15
+}, {
+        "anio": "2016",
+        "mes": 7,
+        "entidad": "Ministerio de Hacienda",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 18
+}, {
+        "anio": "2016",
+        "mes": 8,
+        "entidad": "Ministerio de Hacienda",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 25
+}, {
+        "anio": "2016",
+        "mes": 4,
+        "entidad": "Ministerio de Hacienda",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 8
+}, {
+        "anio": "2016",
+        "mes": 10,
+        "entidad": "Ministerio de Hacienda",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 17
+}, {
+        "anio": "2016",
+        "mes": 1,
+        "entidad": "Ministerio de Hacienda",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 2
+}, {
+        "anio": "2016",
+        "mes": 8,
+        "entidad": "Ministerio de Industria y Comercio",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 5
+}, {
+        "anio": "2016",
+        "mes": 5,
+        "entidad": "Ministerio de Industria y Comercio",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 4
+}, {
+        "anio": "2016",
+        "mes": 11,
+        "entidad": "Ministerio de Industria y Comercio",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 8
+}, {
+        "anio": "2016",
+        "mes": 6,
+        "entidad": "Ministerio de Industria y Comercio",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 7
+}, {
+        "anio": "2016",
+        "mes": 3,
+        "entidad": "Ministerio de Industria y Comercio",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 6
+}, {
+        "anio": "2016",
+        "mes": 4,
+        "entidad": "Ministerio de Industria y Comercio",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 10
+}, {
+        "anio": "2016",
+        "mes": 7,
+        "entidad": "Ministerio de Industria y Comercio",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 6
+}, {
+        "anio": "2016",
+        "mes": 10,
+        "entidad": "Ministerio de Industria y Comercio",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 2
+}, {
+        "anio": "2016",
+        "mes": 12,
+        "entidad": "Ministerio de Industria y Comercio",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 14
+}, {
+        "anio": "2016",
+        "mes": 9,
+        "entidad": "Ministerio de Industria y Comercio",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 3
+}, {
+        "anio": "2016",
+        "mes": 2,
+        "entidad": "Ministerio de Industria y Comercio",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 3
+}, {
+        "anio": "2016",
+        "mes": 3,
+        "entidad": "Ministerio de Justicia y Trabajo",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 1
+}, {
+        "anio": "2016",
+        "mes": 9,
+        "entidad": "Ministerio de Justicia y Trabajo",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 7
+}, {
+        "anio": "2016",
+        "mes": 10,
+        "entidad": "Ministerio de Justicia y Trabajo",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 9
+}, {
+        "anio": "2016",
+        "mes": 8,
+        "entidad": "Ministerio de Justicia y Trabajo",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 18
+}, {
+        "anio": "2016",
+        "mes": 12,
+        "entidad": "Ministerio de Justicia y Trabajo",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 33
+}, {
+        "anio": "2016",
+        "mes": 7,
+        "entidad": "Ministerio de Justicia y Trabajo",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 12
+}, {
+        "anio": "2016",
+        "mes": 11,
+        "entidad": "Ministerio de Justicia y Trabajo",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 23
+}, {
+        "anio": "2016",
+        "mes": 2,
+        "entidad": "Ministerio de la Mujer",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 1
+}, {
+        "anio": "2016",
+        "mes": 5,
+        "entidad": "Ministerio de la Mujer",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 10
+}, {
+        "anio": "2016",
+        "mes": 7,
+        "entidad": "Ministerio de la Mujer",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 4
+}, {
+        "anio": "2016",
+        "mes": 9,
+        "entidad": "Ministerio de la Mujer",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 5
+}, {
+        "anio": "2016",
+        "mes": 11,
+        "entidad": "Ministerio de la Mujer",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 22
+}, {
+        "anio": "2016",
+        "mes": 8,
+        "entidad": "Ministerio de la Mujer",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 2
+}, {
+        "anio": "2016",
+        "mes": 6,
+        "entidad": "Ministerio de la Mujer",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 4
+}, {
+        "anio": "2016",
+        "mes": 4,
+        "entidad": "Ministerio de la Mujer",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 2
+}, {
+        "anio": "2016",
+        "mes": 10,
+        "entidad": "Ministerio de la Mujer",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 3
+}, {
+        "anio": "2016",
+        "mes": 5,
+        "entidad": "Ministerio del Interior",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 20
+}, {
+        "anio": "2016",
+        "mes": 12,
+        "entidad": "Ministerio del Interior",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 48
+}, {
+        "anio": "2016",
+        "mes": 8,
+        "entidad": "Ministerio del Interior",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 25
+}, {
+        "anio": "2016",
+        "mes": 3,
+        "entidad": "Ministerio del Interior",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 9
+}, {
+        "anio": "2016",
+        "mes": 9,
+        "entidad": "Ministerio del Interior",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 30
+}, {
+        "anio": "2016",
+        "mes": 11,
+        "entidad": "Ministerio del Interior",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 41
+}, {
+        "anio": "2016",
+        "mes": 2,
+        "entidad": "Ministerio del Interior",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 10
+}, {
+        "anio": "2016",
+        "mes": 10,
+        "entidad": "Ministerio del Interior",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 36
+}, {
+        "anio": "2016",
+        "mes": 7,
+        "entidad": "Ministerio del Interior",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 26
+}, {
+        "anio": "2016",
+        "mes": 4,
+        "entidad": "Ministerio del Interior",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 20
+}, {
+        "anio": "2016",
+        "mes": 1,
+        "entidad": "Ministerio del Interior",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 9
+}, {
+        "anio": "2016",
+        "mes": 6,
+        "entidad": "Ministerio del Interior",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 74
+}, {
+        "anio": "2016",
+        "mes": 5,
+        "entidad": "Ministerio de Obras Públicas y Comunicaciones",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 19
+}, {
+        "anio": "2016",
+        "mes": 1,
+        "entidad": "Ministerio de Obras Públicas y Comunicaciones",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 1
+}, {
+        "anio": "2016",
+        "mes": 9,
+        "entidad": "Ministerio de Obras Públicas y Comunicaciones",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 19
+}, {
+        "anio": "2016",
+        "mes": 12,
+        "entidad": "Ministerio de Obras Públicas y Comunicaciones",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 62
+}, {
+        "anio": "2016",
+        "mes": 7,
+        "entidad": "Ministerio de Obras Públicas y Comunicaciones",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 16
+}, {
+        "anio": "2016",
+        "mes": 2,
+        "entidad": "Ministerio de Obras Públicas y Comunicaciones",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 19
+}, {
+        "anio": "2016",
+        "mes": 3,
+        "entidad": "Ministerio de Obras Públicas y Comunicaciones",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 8
+}, {
+        "anio": "2016",
+        "mes": 4,
+        "entidad": "Ministerio de Obras Públicas y Comunicaciones",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 8
+}, {
+        "anio": "2016",
+        "mes": 6,
+        "entidad": "Ministerio de Obras Públicas y Comunicaciones",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 18
+}, {
+        "anio": "2016",
+        "mes": 10,
+        "entidad": "Ministerio de Obras Públicas y Comunicaciones",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 28
+}, {
+        "anio": "2016",
+        "mes": 11,
+        "entidad": "Ministerio de Obras Públicas y Comunicaciones",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 25
+}, {
+        "anio": "2016",
+        "mes": 8,
+        "entidad": "Ministerio de Obras Públicas y Comunicaciones",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 17
+}, {
+        "anio": "2016",
+        "mes": 8,
+        "entidad": "Ministerio de Relaciones Exteriores",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 10
+}, {
+        "anio": "2016",
+        "mes": 9,
+        "entidad": "Ministerio de Relaciones Exteriores",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 16
+}, {
+        "anio": "2016",
+        "mes": 6,
+        "entidad": "Ministerio de Relaciones Exteriores",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 6
+}, {
+        "anio": "2016",
+        "mes": 2,
+        "entidad": "Ministerio de Relaciones Exteriores",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 2
+}, {
+        "anio": "2016",
+        "mes": 3,
+        "entidad": "Ministerio de Relaciones Exteriores",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 3
+}, {
+        "anio": "2016",
+        "mes": 10,
+        "entidad": "Ministerio de Relaciones Exteriores",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 3
+}, {
+        "anio": "2016",
+        "mes": 4,
+        "entidad": "Ministerio de Relaciones Exteriores",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 3
+}, {
+        "anio": "2016",
+        "mes": 7,
+        "entidad": "Ministerio de Relaciones Exteriores",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 6
+}, {
+        "anio": "2016",
+        "mes": 12,
+        "entidad": "Ministerio de Relaciones Exteriores",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 31
+}, {
+        "anio": "2016",
+        "mes": 5,
+        "entidad": "Ministerio de Relaciones Exteriores",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 4
+}, {
+        "anio": "2016",
+        "mes": 11,
+        "entidad": "Ministerio de Relaciones Exteriores",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 4
+}, {
+        "anio": "2016",
+        "mes": 3,
+        "entidad": "Ministerio de Salud Pública y Bienestar Social",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 62
+}, {
+        "anio": "2016",
+        "mes": 12,
+        "entidad": "Ministerio de Salud Pública y Bienestar Social",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 178
+}, {
+        "anio": "2016",
+        "mes": 11,
+        "entidad": "Ministerio de Salud Pública y Bienestar Social",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 86
+}, {
+        "anio": "2016",
+        "mes": 8,
+        "entidad": "Ministerio de Salud Pública y Bienestar Social",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 144
+}, {
+        "anio": "2016",
+        "mes": 6,
+        "entidad": "Ministerio de Salud Pública y Bienestar Social",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 42
+}, {
+        "anio": "2016",
+        "mes": 1,
+        "entidad": "Ministerio de Salud Pública y Bienestar Social",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 36
+}, {
+        "anio": "2016",
+        "mes": 5,
+        "entidad": "Ministerio de Salud Pública y Bienestar Social",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 40
+}, {
+        "anio": "2016",
+        "mes": 10,
+        "entidad": "Ministerio de Salud Pública y Bienestar Social",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 64
+}, {
+        "anio": "2016",
+        "mes": 7,
+        "entidad": "Ministerio de Salud Pública y Bienestar Social",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 122
+}, {
+        "anio": "2016",
+        "mes": 2,
+        "entidad": "Ministerio de Salud Pública y Bienestar Social",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 44
+}, {
+        "anio": "2016",
+        "mes": 4,
+        "entidad": "Ministerio de Salud Pública y Bienestar Social",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 72
+}, {
+        "anio": "2016",
+        "mes": 9,
+        "entidad": "Ministerio de Salud Pública y Bienestar Social",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 104
+}, {
+        "anio": "2016",
+        "mes": 2,
+        "entidad": "Ministerio de Trabajo, Empleo y Seguridad Social",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 2
+}, {
+        "anio": "2016",
+        "mes": 6,
+        "entidad": "Ministerio de Trabajo, Empleo y Seguridad Social",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 17
+}, {
+        "anio": "2016",
+        "mes": 11,
+        "entidad": "Ministerio de Trabajo, Empleo y Seguridad Social",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 34
+}, {
+        "anio": "2016",
+        "mes": 3,
+        "entidad": "Ministerio de Trabajo, Empleo y Seguridad Social",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 7
+}, {
+        "anio": "2016",
+        "mes": 8,
+        "entidad": "Ministerio de Trabajo, Empleo y Seguridad Social",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 132
+}, {
+        "anio": "2016",
+        "mes": 12,
+        "entidad": "Ministerio de Trabajo, Empleo y Seguridad Social",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 103
+}, {
+        "anio": "2016",
+        "mes": 10,
+        "entidad": "Ministerio de Trabajo, Empleo y Seguridad Social",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 50
+}, {
+        "anio": "2016",
+        "mes": 4,
+        "entidad": "Ministerio de Trabajo, Empleo y Seguridad Social",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 5
+}, {
+        "anio": "2016",
+        "mes": 5,
+        "entidad": "Ministerio de Trabajo, Empleo y Seguridad Social",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 11
+}, {
+        "anio": "2016",
+        "mes": 7,
+        "entidad": "Ministerio de Trabajo, Empleo y Seguridad Social",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 27
+}, {
+        "anio": "2016",
+        "mes": 9,
+        "entidad": "Ministerio de Trabajo, Empleo y Seguridad Social",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 33
+}, {
+        "anio": "2016",
+        "mes": 8,
+        "entidad": "Presidencia de la República",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 101
+}, {
+        "anio": "2016",
+        "mes": 5,
+        "entidad": "Presidencia de la República",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 58
+}, {
+        "anio": "2016",
+        "mes": 1,
+        "entidad": "Presidencia de la República",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 6
+}, {
+        "anio": "2016",
+        "mes": 3,
+        "entidad": "Presidencia de la República",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 43
+}, {
+        "anio": "2016",
+        "mes": 11,
+        "entidad": "Presidencia de la República",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 85
+}, {
+        "anio": "2016",
+        "mes": 2,
+        "entidad": "Presidencia de la República",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 17
+}, {
+        "anio": "2016",
+        "mes": 7,
+        "entidad": "Presidencia de la República",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 78
+}, {
+        "anio": "2016",
+        "mes": 10,
+        "entidad": "Presidencia de la República",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 51
+}, {
+        "anio": "2016",
+        "mes": 6,
+        "entidad": "Presidencia de la República",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 102
+}, {
+        "anio": "2016",
+        "mes": 12,
+        "entidad": "Presidencia de la República",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 173
+}, {
+        "anio": "2016",
+        "mes": 9,
+        "entidad": "Presidencia de la República",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 38
+}, {
+        "anio": "2016",
+        "mes": 4,
+        "entidad": "Presidencia de la República",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 59
+}, {
+        "anio": "2016",
+        "mes": 3,
+        "entidad": "Vicepresidencia de la República",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 1
+}, {
+        "anio": "2016",
+        "mes": 10,
+        "entidad": "Vicepresidencia de la República",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 2
+}, {
+        "anio": "2016",
+        "mes": 6,
+        "entidad": "Vicepresidencia de la República",
+        "nivel_entidad": "PODER EJECUTIVO",
+        "cantidad": 2
+}, {
+        "anio": "2016",
+        "mes": 12,
+        "entidad": "Cámara de Diputados",
+        "nivel_entidad": "PODER LEGISLATIVO",
+        "cantidad": 9
+    }, {
+        "anio": "2016",
+        "mes": 1,
+        "entidad": "Cámara de Diputados",
+        "nivel_entidad": "PODER LEGISLATIVO",
+        "cantidad": 4
+    }, {
+        "anio": "2016",
+        "mes": 3,
+        "entidad": "Cámara de Diputados",
+        "nivel_entidad": "PODER LEGISLATIVO",
+        "cantidad": 16
+    }, {
+        "anio": "2016",
+        "mes": 4,
+        "entidad": "Cámara de Diputados",
+        "nivel_entidad": "PODER LEGISLATIVO",
+        "cantidad": 4
+    }, {
+        "anio": "2016",
+        "mes": 7,
+        "entidad": "Cámara de Diputados",
+        "nivel_entidad": "PODER LEGISLATIVO",
+        "cantidad": 1
+    }, {
+        "anio": "2016",
+        "mes": 9,
+        "entidad": "Cámara de Diputados",
+        "nivel_entidad": "PODER LEGISLATIVO",
+        "cantidad": 4
+    }, {
+        "anio": "2016",
+        "mes": 8,
+        "entidad": "Cámara de Diputados",
+        "nivel_entidad": "PODER LEGISLATIVO",
+        "cantidad": 3
+    }, {
+        "anio": "2016",
+        "mes": 11,
+        "entidad": "Cámara de Diputados",
+        "nivel_entidad": "PODER LEGISLATIVO",
+        "cantidad": 5
+    }, {
+        "anio": "2016",
+        "mes": 6,
+        "entidad": "Cámara de Diputados",
+        "nivel_entidad": "PODER LEGISLATIVO",
+        "cantidad": 10
+    }, {
+        "anio": "2016",
+        "mes": 5,
+        "entidad": "Cámara de Diputados",
+        "nivel_entidad": "PODER LEGISLATIVO",
+        "cantidad": 9
+    }, {
+        "anio": "2016",
+        "mes": 2,
+        "entidad": "Cámara de Diputados",
+        "nivel_entidad": "PODER LEGISLATIVO",
+        "cantidad": 8
+    }, {
+        "anio": "2016",
+        "mes": 10,
+        "entidad": "Cámara de Diputados",
+        "nivel_entidad": "PODER LEGISLATIVO",
+        "cantidad": 3
+    }, {
+        "anio": "2016",
+        "mes": 4,
+        "entidad": "Cámara de Senadores",
+        "nivel_entidad": "PODER LEGISLATIVO",
+        "cantidad": 2
+    }, {
+        "anio": "2016",
+        "mes": 5,
+        "entidad": "Cámara de Senadores",
+        "nivel_entidad": "PODER LEGISLATIVO",
+        "cantidad": 3
+    }, {
+        "anio": "2016",
+        "mes": 7,
+        "entidad": "Cámara de Senadores",
+        "nivel_entidad": "PODER LEGISLATIVO",
+        "cantidad": 2
+    }, {
+        "anio": "2016",
+        "mes": 1,
+        "entidad": "Cámara de Senadores",
+        "nivel_entidad": "PODER LEGISLATIVO",
+        "cantidad": 1
+    }, {
+        "anio": "2016",
+        "mes": 8,
+        "entidad": "Cámara de Senadores",
+        "nivel_entidad": "PODER LEGISLATIVO",
+        "cantidad": 3
+    }, {
+        "anio": "2016",
+        "mes": 2,
+        "entidad": "Cámara de Senadores",
+        "nivel_entidad": "PODER LEGISLATIVO",
+        "cantidad": 4
+    }, {
+        "anio": "2016",
+        "mes": 3,
+        "entidad": "Cámara de Senadores",
+        "nivel_entidad": "PODER LEGISLATIVO",
+        "cantidad": 9
+    }, {
+        "anio": "2016",
+        "mes": 11,
+        "entidad": "Cámara de Senadores",
+        "nivel_entidad": "PODER LEGISLATIVO",
+        "cantidad": 8
+    }, {
+        "anio": "2016",
+        "mes": 6,
+        "entidad": "Cámara de Senadores",
+        "nivel_entidad": "PODER LEGISLATIVO",
+        "cantidad": 9
+    }, {
+        "anio": "2016",
+        "mes": 12,
+        "entidad": "Cámara de Senadores",
+        "nivel_entidad": "PODER LEGISLATIVO",
+        "cantidad": 15
+    }, {
+        "anio": "2016",
+        "mes": 9,
+        "entidad": "Cámara de Senadores",
+        "nivel_entidad": "PODER LEGISLATIVO",
+        "cantidad": 1
+    }, {
+        "anio": "2016",
+        "mes": 9,
+        "entidad": "Congreso Nacional",
+        "nivel_entidad": "PODER LEGISLATIVO",
+        "cantidad": 15
+    }, {
+        "anio": "2016",
+        "mes": 1,
+        "entidad": "Congreso Nacional",
+        "nivel_entidad": "PODER LEGISLATIVO",
+        "cantidad": 4
+    }, {
+        "anio": "2016",
+        "mes": 3,
+        "entidad": "Congreso Nacional",
+        "nivel_entidad": "PODER LEGISLATIVO",
+        "cantidad": 7
+    }, {
+        "anio": "2016",
+        "mes": 7,
+        "entidad": "Congreso Nacional",
+        "nivel_entidad": "PODER LEGISLATIVO",
+        "cantidad": 6
+    }, {
+        "anio": "2016",
+        "mes": 12,
+        "entidad": "Congreso Nacional",
+        "nivel_entidad": "PODER LEGISLATIVO",
+        "cantidad": 26
+    }, {
+        "anio": "2016",
+        "mes": 11,
+        "entidad": "Congreso Nacional",
+        "nivel_entidad": "PODER LEGISLATIVO",
+        "cantidad": 6
+    }, {
+        "anio": "2016",
+        "mes": 2,
+        "entidad": "Congreso Nacional",
+        "nivel_entidad": "PODER LEGISLATIVO",
+        "cantidad": 12
+    }, {
+        "anio": "2016",
+        "mes": 8,
+        "entidad": "Congreso Nacional",
+        "nivel_entidad": "PODER LEGISLATIVO",
+        "cantidad": 10
+    }, {
+        "anio": "2016",
+        "mes": 4,
+        "entidad": "Congreso Nacional",
+        "nivel_entidad": "PODER LEGISLATIVO",
+        "cantidad": 4
+    }, {
+        "anio": "2016",
+        "mes": 5,
+        "entidad": "Congreso Nacional",
+        "nivel_entidad": "PODER LEGISLATIVO",
+        "cantidad": 28
+    }, {
+        "anio": "2016",
+        "mes": 10,
+        "entidad": "Congreso Nacional",
+        "nivel_entidad": "PODER LEGISLATIVO",
+        "cantidad": 6
+    }, {
+        "anio": "2016",
+        "mes": 6,
+        "entidad": "Congreso Nacional",
+        "nivel_entidad": "PODER LEGISLATIVO",
+        "cantidad": 36
+    },
+    {
+        "anio": "2016",
+        "mes": 12,
+        "entidad": "Consejo de la Magistratura",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 10
+    }, {
+        "anio": "2016",
+        "mes": 7,
+        "entidad": "Consejo de la Magistratura",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 3
+    }, {
+        "anio": "2016",
+        "mes": 10,
+        "entidad": "Consejo de la Magistratura",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 4
+    }, {
+        "anio": "2016",
+        "mes": 6,
+        "entidad": "Consejo de la Magistratura",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 5
+    }, {
+        "anio": "2016",
+        "mes": 9,
+        "entidad": "Consejo de la Magistratura",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 1
+    }, {
+        "anio": "2016",
+        "mes": 8,
+        "entidad": "Corte Suprema de Justicia",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 114
+    }, {
+        "anio": "2016",
+        "mes": 2,
+        "entidad": "Corte Suprema de Justicia",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 3
+    }, {
+        "anio": "2016",
+        "mes": 6,
+        "entidad": "Corte Suprema de Justicia",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 93
+    }, {
+        "anio": "2016",
+        "mes": 10,
+        "entidad": "Corte Suprema de Justicia",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 77
+    }, {
+        "anio": "2016",
+        "mes": 7,
+        "entidad": "Corte Suprema de Justicia",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 91
+    }, {
+        "anio": "2016",
+        "mes": 1,
+        "entidad": "Corte Suprema de Justicia",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 1
+    }, {
+        "anio": "2016",
+        "mes": 12,
+        "entidad": "Corte Suprema de Justicia",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 94
+    }, {
+        "anio": "2016",
+        "mes": 9,
+        "entidad": "Corte Suprema de Justicia",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 58
+    }, {
+        "anio": "2016",
+        "mes": 4,
+        "entidad": "Corte Suprema de Justicia",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 41
+    }, {
+        "anio": "2016",
+        "mes": 11,
+        "entidad": "Corte Suprema de Justicia",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 74
+    }, {
+        "anio": "2016",
+        "mes": 3,
+        "entidad": "Corte Suprema de Justicia",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 21
+    }, {
+        "anio": "2016",
+        "mes": 5,
+        "entidad": "Corte Suprema de Justicia",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 50
+    }, {
+        "anio": "2016",
+        "mes": 7,
+        "entidad": "Defensoria Publica",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 9
+    }, {
+        "anio": "2016",
+        "mes": 8,
+        "entidad": "Defensoria Publica",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 14
+    }, {
+        "anio": "2016",
+        "mes": 2,
+        "entidad": "Defensoria Publica",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 1
+    }, {
+        "anio": "2016",
+        "mes": 10,
+        "entidad": "Defensoria Publica",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 5
+    }, {
+        "anio": "2016",
+        "mes": 11,
+        "entidad": "Defensoria Publica",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 3
+    }, {
+        "anio": "2016",
+        "mes": 4,
+        "entidad": "Defensoria Publica",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 10
+    }, {
+        "anio": "2016",
+        "mes": 6,
+        "entidad": "Defensoria Publica",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 2
+    }, {
+        "anio": "2016",
+        "mes": 6,
+        "entidad": "Jurado de Enjuiciamiento de Magistrados",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 2
+    }, {
+        "anio": "2016",
+        "mes": 1,
+        "entidad": "Jurado de Enjuiciamiento de Magistrados",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 1
+    }, {
+        "anio": "2016",
+        "mes": 5,
+        "entidad": "Jurado de Enjuiciamiento de Magistrados",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 5
+    }, {
+        "anio": "2016",
+        "mes": 8,
+        "entidad": "Jurado de Enjuiciamiento de Magistrados",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 3
+    }, {
+        "anio": "2016",
+        "mes": 3,
+        "entidad": "Jurado de Enjuiciamiento de Magistrados",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 2
+    }, {
+        "anio": "2016",
+        "mes": 10,
+        "entidad": "Jurado de Enjuiciamiento de Magistrados",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 5
+    }, {
+        "anio": "2016",
+        "mes": 4,
+        "entidad": "Jurado de Enjuiciamiento de Magistrados",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 7
+    }, {
+        "anio": "2016",
+        "mes": 12,
+        "entidad": "Jurado de Enjuiciamiento de Magistrados",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 3
+    }, {
+        "anio": "2016",
+        "mes": 7,
+        "entidad": "Jurado de Enjuiciamiento de Magistrados",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 8
+    }, {
+        "anio": "2016",
+        "mes": 6,
+        "entidad": "Justicia Electoral",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 26
+    }, {
+        "anio": "2016",
+        "mes": 10,
+        "entidad": "Justicia Electoral",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 16
+    }, {
+        "anio": "2016",
+        "mes": 1,
+        "entidad": "Justicia Electoral",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 1
+    }, {
+        "anio": "2016",
+        "mes": 5,
+        "entidad": "Justicia Electoral",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 1
+    }, {
+        "anio": "2016",
+        "mes": 8,
+        "entidad": "Justicia Electoral",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 39
+    }, {
+        "anio": "2016",
+        "mes": 9,
+        "entidad": "Justicia Electoral",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 3
+    }, {
+        "anio": "2016",
+        "mes": 4,
+        "entidad": "Justicia Electoral",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 9
+    }, {
+        "anio": "2016",
+        "mes": 11,
+        "entidad": "Justicia Electoral",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 1
+    }, {
+        "anio": "2016",
+        "mes": 7,
+        "entidad": "Justicia Electoral",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 30
+    }, {
+        "anio": "2016",
+        "mes": 3,
+        "entidad": "Ministerio Público",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 7
+    }, {
+        "anio": "2016",
+        "mes": 7,
+        "entidad": "Ministerio Público",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 13
+    }, {
+        "anio": "2016",
+        "mes": 6,
+        "entidad": "Ministerio Público",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 20
+    }, {
+        "anio": "2016",
+        "mes": 5,
+        "entidad": "Ministerio Público",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 9
+    }, {
+        "anio": "2016",
+        "mes": 10,
+        "entidad": "Ministerio Público",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 14
+    }, {
+        "anio": "2016",
+        "mes": 12,
+        "entidad": "Ministerio Público",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 45
+    }, {
+        "anio": "2016",
+        "mes": 11,
+        "entidad": "Ministerio Público",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 26
+    }, {
+        "anio": "2016",
+        "mes": 8,
+        "entidad": "Ministerio Público",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 7
+    }, {
+        "anio": "2016",
+        "mes": 4,
+        "entidad": "Ministerio Público",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 18
+    }, {
+        "anio": "2016",
+        "mes": 2,
+        "entidad": "Ministerio Público",
+        "nivel_entidad": "PODER JUDICIAL",
+        "cantidad": 1
     }]
