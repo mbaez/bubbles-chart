@@ -193,7 +193,6 @@ OrbitBuilder.prototype.orbitRotate = function (node, pd, options) {
         var dy = yc - yi;
         //Math.atan((p1y - p2y) / (p2x - p1x)) * (180 / Math.PI);
         var a = Math.atan2(dy, dx) * (180 / Math.PI);
-        //console.log(a);
         return a < 0 ? a - 180 : a;
     }
 
@@ -206,7 +205,6 @@ OrbitBuilder.prototype.orbitRotate = function (node, pd, options) {
         })
         .attrTween("transform", function (d, i) {
             var ai = angle(d);
-            console.log("angulo:", ai);
             var i = d3.interpolate(0, ai);
             return function (t) {
                 return "rotate(" + i(t) + ")";
@@ -215,7 +213,6 @@ OrbitBuilder.prototype.orbitRotate = function (node, pd, options) {
         .each("end", function () {
             var ctr = node.attr("transform");
             ctr = ctr.split(";");
-            console.log(ctr);
             node.select(".shape")
                 .transition()
                 .duration(speed)

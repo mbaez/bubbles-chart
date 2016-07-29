@@ -11,7 +11,6 @@ BubbleAnimation.prototype.animationTick = function (method, validate, speed) {
         if (validate(waves.length)) {
             thiz[method]();
         } else {
-            console.info("clear - >" + method);
             clearInterval(interval);
         }
     }, speed);
@@ -29,7 +28,7 @@ BubbleAnimation.prototype.initialize = function () {
 }
 
 /**
- * If the visualization si liquid, this method implement svg 
+ * If the visualization si liquid, this method implement svg
  * transitions to the wave path
  */
 BubbleAnimation.prototype.animateWave = function (wave) {
