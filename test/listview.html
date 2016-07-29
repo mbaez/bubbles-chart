@@ -12,14 +12,21 @@
     <script>
         //test
         $(function() {
-
             var options = {
                 container: "#test",
                 label: "entidad",
                 size: "cantidad",
-                //time: "anio",
-                group: "mes",
-                type: "list"
+                xAxis: {
+                    key: "mes"
+                },
+                type: "list",
+                filters: [{
+                    text: "Nivel Entidad",
+                    value: "nivel_entidad"
+                }, {
+                    text: "Año",
+                    value: "anio"
+                }]
             };
 
             var viz = new BubbleChart(options);
