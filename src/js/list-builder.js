@@ -1,7 +1,14 @@
 function ListBuilder(config) {
     UiBuilder.call(this, config);
     this.rscale = 0;
+    this.activeFilters = {};
     if (config) {
+        var tmp = this.config.xAxis;
+        if (typeof this.config.xAxis == "string") {
+            this.config.xAxis = {};
+            this.config.xAxis.key = tmp;
+        }
+
         this.initialize();
     }
 }
@@ -10,11 +17,94 @@ ListBuilder.prototype = new UiBuilder();
 ListBuilder.prototype.constructor = ListBuilder;
 
 /**
- *
+ * Se sobrescribe el método prepare container del padre para modificar
+ * el width de la visualización.
  */
 ListBuilder.prototype.prepareContainer = function () {
     UiBuilder.prototype.prepareContainer.call(this);
     $("#" + this.vizId).width(this.width);
+}
+
+/**
+ * Set visualization data.
+ * @param{Array} data
+ */
+ListBuilder.prototype.data = function (data) {
+    //UiBuilder.prototype.data.call(this, data);
+    this.afterData(data);
+    this.pData = this.prepareData(data);
+    if (this.config.filters.length > 0) {
+        this.buildFilter();
+    }
+    this.builder(this.pData)
+    if (this.config.time) {
+        this.timeline();
+    }
+}
+
+ListBuilder.prototype.buildFilter = function () {
+    var thiz = this;
+    var filters = [];
+    if (this.config.filters.length > 0) {
+        filters = filters.concat(this.config.filters);
+    }
+    var container = this.headerId;
+    //for (var filter in this.filters) {
+    for (var i = 0; i < filters.length; i++) {
+        var filter = filters[i].value;
+        var $footer = $("#" + container);
+        var $toogle = $("<div></div>");
+        var toggleId = container + "-" + filter;
+        $toogle.addClass("bubble-toogle");
+        $toogle.attr("id", toggleId);
+        $footer.append($toogle);
+
+        var selected = true;
+        var dataFilters = this.filters[filter].map(function (d) {
+            var dmap = {
+                text: d,
+                value: d,
+                attr: filter
+            };
+            if (selected) {
+                dmap.selected = false;
+                selected = false;
+                thiz.activeFilters[filter] = d;
+            }
+            return dmap;
+        });
+
+        var thiz = this;
+        var toggle = d3plus.form()
+            .data(dataFilters)
+            .container("#" + toggleId)
+            .title(filters[i].text)
+            .id("value")
+            .text("text")
+            .type("toggle")
+            .draw();
+    }
+    //bind events
+    $footer.find(".d3plus_toggle").on("click", function (d) {
+        var $target = $(this)[0];
+        var data = $target["__data__"];
+        if (typeof data != "undefined") {
+            thiz.activeFilters[data.attr] = data.value;
+            thiz.builder(thiz.pData);
+        }
+    });
+}
+
+
+/**
+ * Prepare the data for the vizualization
+ */
+BaseBuilder.prototype.roolup = function (v, sample) {
+    var data = {};
+    for (var attr in sample) {
+        this.roolupFilters(v, attr);
+    }
+    return v;
 }
 
 ListBuilder.prototype.prepareData = function (data) {
@@ -23,13 +113,14 @@ ListBuilder.prototype.prepareData = function (data) {
     var sampleObj;
     var tmp = d3.nest()
         .key(function (d) {
-            if (thiz.groups.indexOf(d[thiz.config.group]) < 0) {
-                thiz.groups.push(d[thiz.config.group]);
+            sampleObj = d;
+            if (thiz.groups.indexOf(d[thiz.config.xAxis.key]) < 0) {
+                thiz.groups.push(d[thiz.config.xAxis.key]);
             }
-            return d[thiz.config.label]
+            return d[thiz.config.label];
         })
         .rollup(function (d) {
-            return d;
+            return thiz.roolup(d, sampleObj);
         })
         .entries(data);
 
@@ -44,7 +135,6 @@ ListBuilder.prototype.prepareData = function (data) {
     tmp.map(function (d) {
         d[thiz.config.label] = d.key;
         d[thiz.config.size] = d3.sum(d.values, function (d) {
-            console.log(d);
             return d[thiz.config.size];
         });
         return d;
@@ -54,12 +144,18 @@ ListBuilder.prototype.prepareData = function (data) {
     return tmp;
 }
 
+/**
+ * Este método se encarga de calcular las escala a utilizar para generar 
+ * el gráfico.
+ */
 ListBuilder.prototype.prepareScale = function (data) {
     var len = this.groups.length;
     this.w = this.rowSize() * len;
     this.x = d3.scale.linear().range([this.rowSize(), this.w]);
     this.xAxis = d3.svg.axis().scale(this.x).orient("top");
-    //this.xAxis.tickFormat(d3.format("0000"));
+    if (typeof this.config.xAxis.format !== "undefined") {
+        this.xAxis.tickFormat(this.config.xAxis.format);
+    }
     this.x.domain([data.min, data.max]);
     this.xScale = d3.scale.linear()
         .domain([data.min, data.max])
@@ -105,7 +201,7 @@ ListBuilder.prototype.circle = function (g, data) {
         .enter()
         .append("circle")
         .attr("cx", function (d, i) {
-            return thiz.xScale(d[thiz.config.group]);
+            return thiz.xScale(d[thiz.config.xAxis.key]);
         })
         .attr("cy", data.y)
         .attr("r", function (d) {
@@ -125,7 +221,7 @@ ListBuilder.prototype.text = function (g, data) {
         .append("text")
         .attr("y", data.y)
         .attr("x", function (d) {
-            return thiz.xScale(d[thiz.config.group]);
+            return thiz.xScale(d[thiz.config.xAxis.key]);
         })
         .attr("class", "value")
         .text(function (d) {
@@ -154,7 +250,19 @@ ListBuilder.prototype.scale = function (data) {
 ListBuilder.prototype.builder = function (data) {
     var index = 0;
     var thiz = this;
-    data = this.prepareData(data);
+    var fData = $.extend([], data, true);
+    fData = fData.filter(function (d) {
+        var vals = d.values.filter(function (d) {
+            var show = true;
+            for (filter in thiz.activeFilters) {
+                show = show && (d[filter] == thiz.activeFilters[filter]);
+            }
+            return show;
+        });
+        return vals.length > 0;
+    });
+
+    d3.select("#" + this.vizId).selectAll("svg").remove();
     var svg = d3.select("#" + this.vizId)
         .append("svg")
         .style("width", this.width)
@@ -173,7 +281,7 @@ ListBuilder.prototype.builder = function (data) {
         .call(this.xAxis);
 
     var g = svg.selectAll(".node")
-        .data(data)
+        .data(fData)
         .enter()
         .append("g")
         .attr("y", getY)
@@ -196,7 +304,7 @@ ListBuilder.prototype.builder = function (data) {
 
     this.bindEvents(text);
 
-    var h = this.rowSize() * data.length + thiz.config.padding * 3;
+    var h = this.rowSize() * fData.length + thiz.config.padding * 3;
     $("#" + this.vizId).height(h);
     svg.attr("height", h);
 };

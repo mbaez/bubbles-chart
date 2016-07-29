@@ -64,6 +64,7 @@ BaseBuilder.prototype.roolupFilters = function (v, attr) {
     var plainFilters = this.config.filters.map(function (e) {
         return e.value;
     });
+
     if (plainFilters.indexOf(attr) == -1) {
         return;
     }
