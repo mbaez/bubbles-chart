@@ -4,6 +4,7 @@ function BaseBuilder(config) {
     this.timeArray = [];
     this.timeSelection = [];
     this.filters = {};
+    this.filtersData = {};
     this.config = config;
 }
 
@@ -70,12 +71,21 @@ BaseBuilder.prototype.roolupFilters = function (v, attr) {
     }
 
     this.filters[attr] = typeof this.filters[attr] == "undefined" ? [] : this.filters[attr];
+    this.filtersData[attr] = typeof this.filtersData[attr] == "undefined" ? {} : this.filtersData[attr];
     var thiz = this;
     v.forEach(function (d) {
         if (thiz.filters[attr].indexOf(d[attr]) == -1) {
             thiz.filters[attr].push(d[attr]);
+            thiz.filtersData[attr][d[attr]] = {
+                size: 0,
+                r: 0,
+                cnt: 0
+            };
         }
-    })
+        // se sumarizan los tamaños de los elementos a filtrar
+        thiz.filtersData[attr][d[attr]].size += d[thiz.config.size];
+        thiz.filtersData[attr][d[attr]].cnt += 1;
+    });
 }
 
 /**
