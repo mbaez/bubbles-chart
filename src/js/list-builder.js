@@ -328,6 +328,3 @@ ListBuilder.prototype.builder = function (data) {
     $("#" + this.vizId).height(h);
     svg.attr("height", h);
 };
-
-
-//}
