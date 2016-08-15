@@ -4,6 +4,8 @@
 function MotionBubble(config) {
     UiBuilder.call(this, config);
     this.rscale = 0;
+    this.damper = 0.15;
+    this.layoutGravity = -0.01;
     if (config) {
         this.initialize();
     }
@@ -12,10 +14,9 @@ function MotionBubble(config) {
 MotionBubble.prototype = new UiBuilder();
 MotionBubble.prototype.constructor = MotionBubble;
 
-MotionBubble.prototype.circle = function (node) {}
-
 /**
- *
+ * Se ecnarga de preparar los contenedores donde se renderizarán
+ * Los componentes.
  */
 MotionBubble.prototype.prepareContainer = function () {
     UiBuilder.prototype.prepareContainer.call(this);
@@ -26,10 +27,11 @@ MotionBubble.prototype.prepareContainer = function () {
         x: this.width / 2,
         y: this.diameter / 2
     };
-    this.damper = 0.1;
-    this.layoutGravity = -0.01;
 }
 
+/**
+ * Se encarga de construir los filtros de la parte superior
+ */
 MotionBubble.prototype.buildFilter = function () {
     var filters = [];
     if (this.config.filters.length > 0) {
@@ -67,16 +69,27 @@ MotionBubble.prototype.buildFilter = function () {
     });
 }
 
+MotionBubble.prototype.getMaxRadius = function (attr) {
+    var max = null;
+    for (var key in this.filtersData[attr]) {
+        var d = this.filtersData[attr][key];
+        max = max == null || max < d.r ? d.r : max;
+    }
+    return max;
+}
+
 /**
  * Se encarga de calcular el centro de los filtros
  */
 MotionBubble.prototype.calculateFilterCenter = function () {
     this.filterCenters = {};
+    var $viz = $("#" + this.vizId);
     var cols = this.config.cols;
     var p = this.config.p;
-    var xpadding = 100;
-    var ypadding = 50;
+    var xpadding = 80;
+    var ypadding = 100;
     var newH = this.diameter;
+    var pos = $viz.position()
     for (var attr in this.filters) {
         this.filterCenters[attr] = {};
         var len = this.filters[attr].length;
@@ -84,41 +97,46 @@ MotionBubble.prototype.calculateFilterCenter = function () {
         cols = len < cols ? len : cols;
         var nrows = parseInt(len / cols);
         nrows = nrows == 1 ? 2 : nrows;
-        var dx = (this.width - xpadding) / cols;
+        var dx = (this.width - xpadding * 2) / cols;
         var dy = (this.diameter - ypadding) / nrows;
         var idx = 1;
+        var y0 = pos.top + ypadding / 2;
+        var x0 = pos.left + xpadding / 2;
+        var maxR = 0;
         for (var i = 0; i < len; i++) {
             var strTmp = this.filters[attr][i];
+            var fdata = this.filtersData[attr][strTmp];
+            fdata.r = Math.sqrt(fdata.r);
+            if (idx > cols) {
+                idx = 1;
+                y0 += dy + maxR;
+                maxR = 0;
+            }
             // se calcula la y
+            maxR = maxR < fdata.r ? fdata.r : maxR;
             var row = parseInt(i / cols);
-            var y = dy * (row + 1);
-            y = row == nrows ? y - dy * p : y;
+            var y = y0 + dy;
+            y += 25;
             //se calcula la x
-            idx = idx > cols ? 1 : idx;
             var x = dx * idx;
-            x = idx == 1 ? dx * (1 - p) : x;
-            x = idx == cols ? x - dx * p : x;
+            x = x - fdata.r * 0.3;
             //se actualiza el heigth
             newH = y;
             this.filterCenters[attr][strTmp] = {
                 x: x,
                 y: y,
-                dx: dx,
-                dy: dy,
-                row: row,
-                idx: idx,
-                nrows: nrows
+                r: fdata.r,
+                size: fdata.size,
+                filter: strTmp
             }
             idx += 1;
         }
     }
     //se redimensiona el container
-    var $viz = $("#" + this.vizId);
     var $svg = $viz.find("svg");
     $viz.height(newH + ypadding * 2);
     $svg.height(newH + ypadding * 2);
 }
-
 
 
 /**
@@ -181,6 +199,10 @@ MotionBubble.prototype.buildNodes = function (data, filter) {
         d.y = Math.random() * thiz.diameter;
         d.value = d[thiz.config.size];
         d.r = thiz.rscale(d.value);
+        // se sumarizan los radios de los elementos a filtrar
+        for (var attr in thiz.filters) {
+            thiz.filtersData[attr][d[attr]].r += d.r * d.r;
+        };
     });
 
     darray = darray.sort(function (a, b) {
@@ -224,6 +246,7 @@ MotionBubble.prototype.builder = function (data) {
             var c = thiz.config.color(d[thiz.config.label]);
             return d3plus.color.legible(c);
         });
+
     this.bindMouseEvents(this.circles);
     this.circles.transition()
         .duration(2000)
@@ -274,8 +297,15 @@ MotionBubble.prototype.groupAll = function (nodes, filter) {
                 return thiz.moveTowardsCenter(alpha);
             });
         });
+
     if (typeof filter != "undefined") {
-        this.displayFilters(filter);
+        /*
+        Se invoca al metodo que renderiza los labels de los grupos luego de
+        1 segundo para darle tiempo a que las burbujas se reposicionen.
+        */
+        setTimeout(function () {
+            thiz.displayFilters(filter);
+        }, 1000)
     }
     this.force.start();
 };
@@ -283,8 +313,8 @@ MotionBubble.prototype.groupAll = function (nodes, filter) {
 MotionBubble.prototype.moveTowardsCenter = function (alpha) {
     var thiz = this;
     return function (d) {
-        d.x = d.x + (thiz.center.x - d.x) * (thiz.damper + 0.02) * alpha;
-        return d.y = d.y + (thiz.center.y - d.y) * (thiz.damper + 0.02) * alpha;
+        d.x = d.x + (thiz.center.x - d.x) * (thiz.damper) * alpha;
+        return d.y = d.y + (thiz.center.y - d.y) * (thiz.damper) * alpha;
     };
 };
 
@@ -292,37 +322,77 @@ MotionBubble.prototype.moveTowardsFilter = function (alpha, filter) {
     var thiz = this;
     return function (d) {
         var target = thiz.filterCenters[filter][d[filter]];
-        d.x = d.x + (target.x - d.x) * (thiz.damper + 0.02) * alpha * 1.1;
-        return d.y = d.y + (target.y - d.y) * (thiz.damper + 0.02) * alpha * 1.1;
+        d3.select(this).attr("data-filter", d[filter]);
+        d.x = d.x + (target.x - d.x) * thiz.damper * alpha;
+        d.y = d.y + (target.y - d.y) * thiz.damper * alpha;
     };
 }
 
+/**
+ * Se encarga de otener la mayor X e Y de los nodos luego del filtrado
+ * para determinar la ubicación de los labels.
+ */
+MotionBubble.prototype.getLabelXY = function (filter) {
+
+    var xy = {
+        x: 0,
+        y: 0
+    };
+    $("#" + this.vizId).find("[data-filter= '" + filter + "']")
+        .each(function (e) {
+            var cx = parseFloat($(this).attr("cx"));
+            var cy = parseFloat($(this).attr("cy"));
+            var r = parseFloat($(this).attr("r"));
+            xy.x = xy.x == 0 || (cx - r) < xy.x ? cx - r : xy.x;
+            xy.y = xy.y == 0 || (cy + r * 2) > xy.y ? cy + r * 2 : xy.y;
+        });
+    return xy;
+}
+
+MotionBubble.prototype.text = function (node, center, filter) {
+    var thiz = this;
+    var g = node
+        .append("g")
+        .attr("class", "filters")
+        .filter(function (d) {
+            return typeof center[d].r != "undefined";
+        })
+        .attr("transform", function (d) {
+            var dt = center[d];
+            var pts = thiz.getLabelXY(d);
+            pts.x += dt.r;
+            pts.y += 25;
+
+            return "translate(" + pts.x + "," + pts.y + ")";
+        })
+        .attr("text-anchor", "middle");
+
+    var txt = g.append("text")
+        .attr("class", "labels")
+        .text(function (d) {
+            return thiz.config.format.text(d);
+        });
+
+    var ntxt = g.append("text")
+        .attr("class", "size")
+        .text(function (d) {
+            var dt = center[d];
+            return thiz.config.format.number(dt.size);
+        })
+        .attr("y", 20);
+    return g;
+}
 
 MotionBubble.prototype.displayFilters = function (attr) {
     var thiz = this;
     var data = d3.keys(this.filterCenters[attr]);
-    var filers = d3.select("#" + this.vizId)
+    var center = thiz.filterCenters[attr];
+    var filters = d3.select("#" + this.vizId)
         .select("svg")
         .selectAll(".filters")
         .data(data)
-        .enter()
-        .append("text")
-        .attr("class", "filters")
-        .attr("x", function (d) {
-            var dt = thiz.filterCenters[attr][d];
-            var x = dt.idx == 1 ? dt.dx * 0.5 : dt.x;
-            x = dt.idx == thiz.config.cols ? dt.x + dt.dx * 0.3 : x;
-            return x;
-        }).attr("y", function (d) {
-            var dt = thiz.filterCenters[attr][d];
-            var y = dt.row == 0 ? dt.dy * 0.5 : dt.y + dt.dy * 0.3;
-            y = dt.row == dt.nrows ? dt.y + dt.dy * 0.5 : y;
-            return y;
-        })
-        .attr("text-anchor", "middle")
-        .text(function (d) {
-            return thiz.config.format.text(d);
-        });
+        .enter();
+    return thiz.text(filters, center, attr);
 };
 
 MotionBubble.prototype.hideFilters = function () {
