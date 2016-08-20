@@ -12,6 +12,17 @@ UiBuilder.prototype.initialize = function () {
     this.prepareContainer();
 }
 
+/**
+ * Se encarga de redimencionar el contenedor de la visualización
+ */
+UiBuilder.prototype.resizeViz = function (height) {
+    var $viz = $("#" + this.vizId);
+    var $svg = $viz.find("svg");
+    $viz.animate({"height" : height}, 50);
+    $svg.animate({"height" : height}, 50);
+    //$svg.height(height);
+}
+
 UiBuilder.prototype.bindMouseEvents = function (node) {
     var thiz = this;
     node.on('click', function (d) {
@@ -33,7 +44,7 @@ UiBuilder.prototype.bindMouseEvents = function (node) {
 }
 
 /**
- * Create the visualization and timeline container 
+ * Create the visualization and timeline container
  */
 UiBuilder.prototype.prepareContainer = function () {
     this.diameter = $(this.config.container).height();
