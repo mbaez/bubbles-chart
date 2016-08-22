@@ -6,6 +6,13 @@ function BaseBuilder(config) {
     this.filters = {};
     this.filtersData = {};
     this.config = config;
+    if (config) {
+        // se establecen los atributos por defecto.
+        this.config.colour = this.config.colour == false ? this.config.label : this.config.colour;
+        this.config.title = this.config.title == false ? function title(d) {
+            return d[config.label];
+        } : this.config.title;
+    }
 }
 
 BaseBuilder.prototype = new BubbleEvents();
@@ -62,6 +69,7 @@ BaseBuilder.prototype.buildNodes = function (data, filter) {
 }
 
 BaseBuilder.prototype.roolupFilters = function (v, attr) {
+
     var plainFilters = this.config.filters.map(function (e) {
         return e.value;
     });

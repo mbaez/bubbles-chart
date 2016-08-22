@@ -4,7 +4,9 @@
  */
 function BubbleBuilder(config) {
     UiBuilder.call(this, config);
-    this.initialize();
+    if (config) {
+        this.initialize();
+    }
 }
 
 BubbleBuilder.prototype = new UiBuilder();
@@ -73,7 +75,6 @@ BubbleBuilder.prototype.builder = function (data) {
         this.animation = new BubbleAnimation(this.config.animation);
     }
 }
-
 
 
 /**

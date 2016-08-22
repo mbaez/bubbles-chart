@@ -26,11 +26,34 @@ function ConfigBuilder() {
         sort: false,
         percentage: false,
         color: d3plus.color.scale,
+        /**
+         * Atributo que define el color de las burbujas. Por defecto 
+         * se utiliza el label.
+         */
+        colour: false,
+        /**
+         * Atributo que define el titulo de los tooltips. Por defecto 
+         * se utiliza el label.
+         */
+        title: false,
+        /**
+         * Leyenda que incluye las referencias a los tamaños de las burbujas.
+         */
+        leyend: false,
         offset: 5,
         padding: 30,
+        /**
+         * Custom tooltip
+         */
         tooltip: false,
         level: 0,
+        /**
+         * Para gráficos multilevel, construye el breadcrumbs
+         */
         levels: [],
+        /**
+         * Filtros en forma de switch
+         */
         filters: [],
         toggle: {
             title: "",
@@ -54,11 +77,16 @@ function ConfigBuilder() {
         cols: 5,
         p: 0.3,
         timeContainer: "footer",
+
         listBubble: {
             minRadius: 2,
             maxRadius: 25,
             padding: 5
         },
+
+        /**
+         * Default format functions
+         */
         format: {
             text: function (text, key) {
                 return d3plus.string.title(text);
