@@ -21,7 +21,7 @@ module.exports = function (grunt) {
             server: {
                 options: {
                     hostname: '0.0.0.0',
-                    port: 8888,
+                    port: 8889,
                     base: "dist",
                     livereload: true,
                     middleware: function (connect, options, defaultMiddleware) {
@@ -33,7 +33,7 @@ module.exports = function (grunt) {
         },
         open: {
             all: {
-                path: 'http://localhost:8888'
+                path: 'http://localhost:8889'
             }
         },
         sass: {
@@ -84,6 +84,7 @@ module.exports = function (grunt) {
             libs: {
                 src: [
                 'dist/tmp/layout-orbit.js',
+                'dist/tmp/d3.selectable.js',
                 'dist/tmp/config-builder.js',
                 'dist/tmp/events.js',
                 'dist/tmp/base-builder.js',
