@@ -100,7 +100,7 @@ ListBuilder.prototype.buildFilter = function () {
 /**
  * Prepare the data for the vizualization
  */
-BaseBuilder.prototype.roolup = function (v, sample) {
+ListBuilder.prototype.roolup = function (v, sample) {
     var data = {};
     for (var attr in sample) {
         this.roolupFilters(v, attr);
