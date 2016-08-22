@@ -208,7 +208,7 @@ ListBuilder.prototype.circle = function (g, data) {
         .attr("r", function (d) {
             return rscale(d[thiz.config.size]);
         })
-        .attr("fill", thiz.config.color(data[this.config.label]));
+        .attr("fill", thiz.config.color(data[this.config.colour]));
     this.bindEvents(circles);
     return circles;
 }
@@ -228,7 +228,7 @@ ListBuilder.prototype.text = function (g, data) {
         .text(function (d) {
             return d[thiz.config.size];
         })
-        .attr("fill", this.config.color(data[this.config.label]))
+        .attr("fill", this.config.color(data[this.config.colour]))
         .style("display", "none");
 }
 
@@ -319,7 +319,7 @@ ListBuilder.prototype.builder = function (data) {
             return d[thiz.config.label]
         })
         .style("fill", function (d) {
-            return thiz.config.color(d[thiz.config.label])
+            return thiz.config.color(d[thiz.config.colour])
         });
 
     this.bindEvents(text);

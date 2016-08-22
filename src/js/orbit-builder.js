@@ -150,7 +150,7 @@ OrbitBuilder.prototype.text = function (node, options) {
     return node.append(type)
         .attr("class", "wrap")
         .style("fill", function (d) {
-            var c = thiz.config.color(d[thiz.config.label]);
+            var c = thiz.config.color(d[thiz.config.colour]);
             c = d3plus.color.text(c);
             if (isLikeWhite(c)) {
                 return thiz.config.defaultColor;

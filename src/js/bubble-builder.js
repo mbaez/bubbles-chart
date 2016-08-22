@@ -53,7 +53,7 @@ BubbleBuilder.prototype.builder = function (data) {
     var gnode = node.append("g");
     var main = this.circle(gnode)
         .style("stroke", function (d) {
-            var c = thiz.config.color(d[thiz.config.label]);
+            var c = thiz.config.color(d[thiz.config.colour]);
             return d3plus.color.legible(c);
         });
 

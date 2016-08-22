@@ -63,10 +63,10 @@ TreeBuilder.prototype.circle = function (node) {
         .attr("class", "shape")
         .attr("r", r)
         .style("fill", function (d) {
-            return thiz.config.color(d[thiz.config.label]);
+            return thiz.config.color(d[thiz.config.colour]);
         })
         .style("stroke", function (d) {
-            var c = thiz.config.color(d[thiz.config.label]);
+            var c = thiz.config.color(d[thiz.config.colour]);
             return d3plus.color.legible(c);
         });
 

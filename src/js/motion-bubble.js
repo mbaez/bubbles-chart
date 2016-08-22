@@ -240,11 +240,11 @@ MotionBubble.prototype.builder = function (data) {
             return d.y;
         })
         .attr("fill", function (d) {
-            return thiz.config.color(d[thiz.config.label]);
+            return thiz.config.color(d[thiz.config.colour]);
         })
         .attr("stroke-width", 1)
         .attr("stroke", function (d) {
-            var c = thiz.config.color(d[thiz.config.label]);
+            var c = thiz.config.color(d[thiz.config.colour]);
             var b = d3plus.color.legible(c);
             if (c.toUpperCase() == b.toUpperCase()) {
                 b = d3plus.color.lighter(c, -0.3);

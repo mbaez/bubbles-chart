@@ -99,7 +99,7 @@ UiBuilder.prototype.text = function (node, options) {
     return node.append(type)
         .attr("class", "wrap")
         .style("fill", function (d) {
-            var c = thiz.config.color(d[thiz.config.label]);
+            var c = thiz.config.color(d[thiz.config.colour]);
             c = d3plus.color.text(c);
             if (isLikeWhite(c)) {
                 return thiz.config.defaultColor;
@@ -132,7 +132,7 @@ UiBuilder.prototype.circle = function (node, options) {
             if (typeof options.fill != "undefined") {
                 return options.fill;
             }
-            return thiz.config.color(d[thiz.config.label]);
+            return thiz.config.color(d[thiz.config.colour]);
         });
 }
 
@@ -273,7 +273,7 @@ UiBuilder.prototype.drillup = function () {
  */
 UiBuilder.prototype.updateBreadcrumbs = function (d) {
     //var $target = this.getEl(data);
-    var fill = this.config.color(d[this.config.label]);
+    var fill = this.config.color(d[this.config.colour]);
     var textColor = d3plus.color.text(fill);
     var $brumbs = $(this.config.container).find(".bubble-hierarchies");
     var $a = $brumbs.find("[data-level='" + this.config.level + "']");
