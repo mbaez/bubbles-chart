@@ -430,11 +430,17 @@ MotionBubble.prototype.legend = function () {
         .attr("class", "legend-container");
 
     var overview = container.append("div").attr("class", "legend-overview");
-    overview.append("h3").text(this.config.legend.title);
+    if(this.config.legend.title){
+        overview.append("h3").text(this.config.legend.title);
+    }
     overview.append("p").text(this.config.legend.description);
 
-
     var svg = container.append("svg");
+
+    if(this.config.legend.footer){
+        var footer = container.append("div").attr("class", "legend-footer");
+        footer.append("p").text(this.config.legend.footer);
+    }
     var node = svg.append("g")
         .attr("transform", "translate(" + rmax + ", " + rmax + ")");
 
