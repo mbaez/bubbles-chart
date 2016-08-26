@@ -5,12 +5,25 @@ $time_border: #c3c3c3;
 $text_color: #444444;
 $time_hover:#f1f1f1;
 $gray_color:#ddd;
+$border:#444444;
 .bubble-chart {
     .axis path,
     .axis line {
         fill: none;
         stroke: $gray_color;
         shape-rendering: crispEdges;
+    }
+    .legend-container {
+        color: $border;
+        text {
+            fill: $border;
+        }
+        .legend {
+            stroke-width: 1;
+            stroke: $border;
+            stroke-dasharray: 2 2;
+            fill: none;
+        }
     }
     .tick text {
         fill: $text_color;

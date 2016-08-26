@@ -59,6 +59,7 @@ UiBuilder.prototype.prepareContainer = function () {
 
     this.config.scope = this.config.container.replace("#", "");
     this.vizId = this.config.scope + "-viz";
+    this.legendId = this.config.scope + "-legend";
     this.footerId = this.config.scope + "-footer";
     this.headerId = this.config.scope + "-header";
 
@@ -68,6 +69,9 @@ UiBuilder.prototype.prepareContainer = function () {
     var $viz = $("<div />");
     $viz.attr("id", this.vizId);
 
+    var $legend = $("<div />");
+    $legend.attr("id", this.legendId);
+
     var $footer = $("<div />");
     $footer.attr("id", this.footerId);
 
@@ -76,6 +80,7 @@ UiBuilder.prototype.prepareContainer = function () {
 
     $(this.config.container).append($header);
     $(this.config.container).append($viz);
+    $(this.config.container).append($legend);
     $(this.config.container).append($footer);
 
     $viz.height(this.diameter);

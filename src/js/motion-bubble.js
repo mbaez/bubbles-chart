@@ -61,8 +61,10 @@ MotionBubble.prototype.buildFilter = function () {
         var data = $target["__data__"];
         if (typeof data != "undefined") {
             if (data.value !== "all") {
+                $("#" + thiz.legendId).hide();
                 thiz.groupAll(thiz.circles, data.value);
             } else {
+                $("#" + thiz.legendId).show();
                 thiz.groupAll(thiz.circles);
             }
         }
@@ -185,6 +187,10 @@ MotionBubble.prototype.buildNodes = function (data, filter) {
         return d[thiz.config.size];
     });
 
+    this.sizeData = {};
+    this.sizeData.max = max;
+    this.sizeData.min = min;
+
     min = min == max ? 0 : min;
     var nChilds = darray.length - 10;
     nChilds = nChilds < 5 ? 5 : nChilds;
@@ -254,12 +260,15 @@ MotionBubble.prototype.builder = function (data) {
 
     this.bindMouseEvents(this.circles);
     this.circles.transition()
-        .duration(2000)
+        .duration(this.config.bubble.animation)
         .attr("r", function (d) {
             return d.r;
         })
     this.start();
     this.groupAll(this.circles);
+    if (this.config.legend) {
+        this.legend();
+    }
 }
 
 /**
@@ -313,7 +322,7 @@ MotionBubble.prototype.groupAll = function (nodes, filter) {
         setTimeout(function () {
             thiz.displayFilters(filter);
             //se calcula el tamaño del svg
-        }, 1000)
+        }, this.config.bubble.animation * 0.75)
     }
     this.force.start();
 };
@@ -410,3 +419,43 @@ MotionBubble.prototype.hideFilters = function () {
     d3.select("#" + this.vizId).selectAll(".filters").remove();
     this.resizeViz(this.diameter);
 };
+
+
+MotionBubble.prototype.legend = function () {
+    var thiz = this;
+    var rmin = this.config.bubble.minRadius * 2;
+    var rmax = rmin * 3;
+    var container = d3.select("#" + this.legendId)
+        .style("margin-top", (-(rmax * 3 + 100)) + "px")
+        .attr("class", "legend-container");
+
+    var overview = container.append("div").attr("class", "legend-overview");
+    overview.append("h3").text(this.config.legend.title);
+    overview.append("p").text(this.config.legend.description);
+
+
+    var svg = container.append("svg");
+    var node = svg.append("g")
+        .attr("transform", "translate(" + rmax + ", " + rmax + ")");
+
+    function circle(node, r) {
+        return node.append("circle")
+            .attr("r", r)
+            .attr("class", "legend")
+    }
+
+    function text(node, size) {
+        var txt = "_____ ";
+        txt += thiz.config.format.number(size);
+        return node.append("text")
+            .attr("x", rmax - rmin)
+            .text(txt);
+    }
+
+    text(node, this.sizeData.max).attr("y", -rmin * 2);
+    circle(node, rmax).attr("cy", 10);
+
+    text(node, this.sizeData.min).attr("y", rmin * 2);
+    circle(node, rmin).attr("cy", rmin * 2 + 10);
+
+}

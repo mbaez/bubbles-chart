@@ -55,6 +55,12 @@ function ConfigBuilder() {
          * Filtros en forma de switch
          */
         filters: [],
+        /**
+         * Leyenda del gráfico
+         * @config title
+         * @config description
+         */
+        legend: false,
         toggle: {
             title: "",
             size: false
@@ -73,6 +79,7 @@ function ConfigBuilder() {
         },
         bubble: {
             minRadius: 10,
+            animation: 2000
         },
         cols: 5,
         p: 0.3,
