@@ -106,6 +106,7 @@ MotionBubble.prototype.calculateFilterCenter = function () {
         var y0 = ypadding / 2;
         var x0 = xpadding / 2;
         var maxR = 0;
+        var prevX = 0;
         for (var i = 0; i < len; i++) {
             var strTmp = this.filters[attr][i];
             var fdata = this.filtersData[attr][strTmp];
@@ -121,7 +122,20 @@ MotionBubble.prototype.calculateFilterCenter = function () {
             var y = y0 + dy;
             y += txtHeight;
             //se calcula la x
-            var x = dx * idx;
+            
+            var x = 0;
+            //si es el primer filtercenter, se parte del xpadding. 
+            //Además el centro del primer filtro debe estar en dx/2
+            if(idx === 1){
+                x = xpadding + dx/2;
+            } else {
+            // el filtercenter actual debe encontrarse a dx del filtro anterior
+                x = prevX + dx;
+            }
+
+            //se almacena el x actual como x previa para la siguiente corrida
+            prevX = x;
+
             //x = x - fdata.r * 0.3;
             //se actualiza el heigth
             this.filterCenters[attr][strTmp] = {
@@ -131,6 +145,7 @@ MotionBubble.prototype.calculateFilterCenter = function () {
                 size: fdata.size,
                 filter: strTmp
             }
+
             idx += 1;
         }
         this.filtersData[attr]["MAX_Y"] = y + dy + maxR + ypadding;
@@ -298,6 +313,13 @@ MotionBubble.prototype.tickNodes = function (e, moveCallback) {
 
 MotionBubble.prototype.groupAll = function (nodes, filter) {
     var thiz = this;
+
+    //momento en el que se realizó esta llamada
+    currentTime=  new Date().getTime();
+    
+    //se almacena en thiz la ultima llamada
+    thiz.currentFilterTime = currentTime;
+
     thiz.hideFilters();
     this.force
         .gravity(this.layoutGravity)
@@ -319,10 +341,12 @@ MotionBubble.prototype.groupAll = function (nodes, filter) {
         Se invoca al metodo que renderiza los labels de los grupos luego de
         1 segundo para darle tiempo a que las burbujas se reposicionen.
         */
-        setTimeout(function () {
-            thiz.displayFilters(filter);
-            //se calcula el tamaño del svg
-        }, this.config.bubble.animation * 0.75)
+        setTimeout(function (curtime) {
+            //si esta llamada es la última realizada, se dibujan los filtros sino se ignora
+            if(thiz.currentFilterTime === curtime){
+                thiz.displayFilters(filter);
+            }
+        }, this.config.bubble.animation * 0.75, currentTime)
     }
     this.force.start();
 };
@@ -337,7 +361,7 @@ MotionBubble.prototype.moveTowardsCenter = function (alpha) {
 
 MotionBubble.prototype.moveTowardsFilter = function (alpha, filter) {
     var thiz = this;
-    var xpadding = 40;
+    var xpadding = 80;
     return function (d) {
         var target = thiz.filterCenters[filter][d[filter]];
         d3.select(this).attr("data-filter", d[filter]);
@@ -423,8 +447,11 @@ MotionBubble.prototype.hideFilters = function () {
 
 MotionBubble.prototype.legend = function () {
     var thiz = this;
-    var rmin = this.config.bubble.minRadius * 2;
-    var rmax = rmin * 3;
+    //radio minimo según el dato más pequeño
+    var rmin = thiz.rscale(this.sizeData.min);
+    //radio máximo según el dato más grande
+    var rmax = thiz.rscale(this.sizeData.max);
+
     var container = d3.select("#" + this.legendId)
         .style("margin-top", (-(rmax * 3 + 100)) + "px")
         .attr("class", "legend-container");
@@ -458,10 +485,10 @@ MotionBubble.prototype.legend = function () {
             .text(txt);
     }
 
-    text(node, this.sizeData.max).attr("y", -rmin * 2);
+    text(node, this.sizeData.max).attr("y", -(rmax-10));
     circle(node, rmax).attr("cy", 10);
 
-    text(node, this.sizeData.min).attr("y", rmin * 2);
-    circle(node, rmin).attr("cy", rmin * 2 + 10);
+    text(node, this.sizeData.min).attr("y", (rmax-10));
+    circle(node, rmin).attr("cy", rmax );
 
 }
