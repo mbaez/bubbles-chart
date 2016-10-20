@@ -122,14 +122,14 @@ MotionBubble.prototype.calculateFilterCenter = function () {
             var y = y0 + dy;
             y += txtHeight;
             //se calcula la x
-            
+
             var x = 0;
             //si es el primer filtercenter, se parte del xpadding. 
             //Además el centro del primer filtro debe estar en dx/2
-            if(idx === 1){
-                x = xpadding + dx/2;
+            if (idx === 1) {
+                x = xpadding + dx / 2;
             } else {
-            // el filtercenter actual debe encontrarse a dx del filtro anterior
+                // el filtercenter actual debe encontrarse a dx del filtro anterior
                 x = prevX + dx;
             }
 
@@ -315,8 +315,8 @@ MotionBubble.prototype.groupAll = function (nodes, filter) {
     var thiz = this;
 
     //momento en el que se realizó esta llamada
-    currentTime=  new Date().getTime();
-    
+    currentTime = new Date().getTime();
+
     //se almacena en thiz la ultima llamada
     thiz.currentFilterTime = currentTime;
 
@@ -343,7 +343,7 @@ MotionBubble.prototype.groupAll = function (nodes, filter) {
         */
         setTimeout(function (curtime) {
             //si esta llamada es la última realizada, se dibujan los filtros sino se ignora
-            if(thiz.currentFilterTime === curtime){
+            if (thiz.currentFilterTime === curtime) {
                 thiz.displayFilters(filter);
             }
         }, this.config.bubble.animation * 0.75, currentTime)
@@ -457,14 +457,14 @@ MotionBubble.prototype.legend = function () {
         .attr("class", "legend-container");
 
     var overview = container.append("div").attr("class", "legend-overview");
-    if(this.config.legend.title){
+    if (this.config.legend.title) {
         overview.append("h3").text(this.config.legend.title);
     }
     overview.append("p").text(this.config.legend.description);
 
     var svg = container.append("svg");
 
-    if(this.config.legend.footer){
+    if (this.config.legend.footer) {
         var footer = container.append("div").attr("class", "legend-footer");
         footer.append("p").text(this.config.legend.footer);
     }
@@ -478,17 +478,17 @@ MotionBubble.prototype.legend = function () {
     }
 
     function text(node, size) {
-        var txt = "_____ ";
+        var txt = "----- ";
         txt += thiz.config.format.number(size);
         return node.append("text")
             .attr("x", rmax - rmin)
             .text(txt);
     }
 
-    text(node, this.sizeData.max).attr("y", -(rmax-10));
+    text(node, this.sizeData.max).attr("y", -(rmax - 10));
     circle(node, rmax).attr("cy", 10);
 
-    text(node, this.sizeData.min).attr("y", (rmax-10));
-    circle(node, rmin).attr("cy", rmax );
+    text(node, this.sizeData.min).attr("y", (rmax - 10));
+    circle(node, rmin).attr("cy", rmax);
 
 }

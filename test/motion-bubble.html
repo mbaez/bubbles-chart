@@ -1,0 +1,94 @@
+<!DOCTYPE html >
+<html>
+
+
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" media="screen" href="../css/bubbles-chart.css">
+    <script type="text/javascript" src="../js/bubbles-chart.full.js"></script>
+    <script type="text/javascript" src="js/motion.js"></script>
+    <style>
+        #test {
+            margin-left: auto;
+            margin-right: auto;
+            font-size: 14px !important;
+        }
+        
+        text,
+        .d3plus_node {
+            font-size: 14px !important;
+        }
+        
+        .filters .size {
+            font-weight: bold;
+        }
+        
+        .legend-container {
+            margin-top: -451px !important;
+            width: 260px;
+            font-size: 14px;
+            color: #6C6B6D;
+            text-align: justify;
+        }
+        
+        .legend-container text {
+            font-size: 12px !important;
+            fill: $text_color;
+        }
+        
+        .legend-container svg {
+            width: 100%;
+            height: 100%;
+            margin-left: 70px;
+        }
+
+    </style>
+    <script>
+        //test
+        $(function() {
+            var options = {
+                container: "#test",
+                label: "tipo",
+                size: "cantidad",
+                legend: {
+                    title: "¿Que representa?",
+                    description: "El tamaño de las burbujas refleja la cantidad casos por entidad y tipografía. Donde las burbujas de mayor tamaño representan a las cantidades más elevadas y las burbujas más pequeñas a las cantidades inferiores.",
+                    footer: "Cada burbuja tiene asociada un color que corresponde al tipo de caso."
+                },
+                //colour: "nombreAcreedor",
+                filters: [{
+                    text: "Intitución",
+                    value: "institucion"
+                }, {
+                    text: "Tipo de Caso",
+                    value: "tipo"
+                }],
+                tooltip: function(d) {
+                    return [{
+                        "value": d.cantidad,
+                        "name": "Cantidad de casos"
+                    }, {
+                        "value": d.institucion,
+                        "name": "Institucion"
+                    }]
+
+                },
+                type: "motion"
+            };
+
+            var viz = new BubbleChart(options);
+            viz.data(data);
+            viz.on("click", function(d) {
+                console.log(d);
+            });
+        });
+
+    </script>
+</head>
+
+<body>
+    <div id="test"></div>
+</body>
