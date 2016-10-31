@@ -1,6 +1,6 @@
 /**
  * Default config builder
- * @return {Config} 
+ * @return {Config}
  */
 function ConfigBuilder() {
     /**
@@ -27,12 +27,12 @@ function ConfigBuilder() {
         percentage: false,
         color: d3plus.color.scale,
         /**
-         * Atributo que define el color de las burbujas. Por defecto 
+         * Atributo que define el color de las burbujas. Por defecto
          * se utiliza el label.
          */
         colour: false,
         /**
-         * Atributo que define el titulo de los tooltips. Por defecto 
+         * Atributo que define el titulo de los tooltips. Por defecto
          * se utiliza el label.
          */
         title: false,
@@ -79,9 +79,11 @@ function ConfigBuilder() {
         },
         bubble: {
             minRadius: 10,
+            //maxRadius : dinamico
             animation: 2000
         },
         cols: 5,
+        autoHideLegend: true,
         p: 0.3,
         timeContainer: "footer",
 

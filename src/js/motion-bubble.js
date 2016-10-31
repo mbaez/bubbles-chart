@@ -61,7 +61,9 @@ MotionBubble.prototype.buildFilter = function () {
         var data = $target["__data__"];
         if (typeof data != "undefined") {
             if (data.value !== "all") {
-                $("#" + thiz.legendId).hide();
+                if(thiz.config.autoHideLegend){
+                    $("#" + thiz.legendId).hide();
+                }
                 thiz.groupAll(thiz.circles, data.value);
             } else {
                 $("#" + thiz.legendId).show();
@@ -124,7 +126,7 @@ MotionBubble.prototype.calculateFilterCenter = function () {
             //se calcula la x
 
             var x = 0;
-            //si es el primer filtercenter, se parte del xpadding. 
+            //si es el primer filtercenter, se parte del xpadding.
             //Además el centro del primer filtro debe estar en dx/2
             if (idx === 1) {
                 x = xpadding + dx / 2;
@@ -211,6 +213,7 @@ MotionBubble.prototype.buildNodes = function (data, filter) {
     nChilds = nChilds < 5 ? 5 : nChilds;
     nChilds = nChilds > 30 ? 30 : nChilds;
     var maxR = this.width / nChilds;
+    maxR = typeof this.config.bubble.maxRadius != "undefined" ? this.config.bubble.maxRadius : maxR;
     this.rscale = d3.scale.pow()
         .exponent(0.5)
         .domain([min, max])
