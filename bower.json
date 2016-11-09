@@ -4,6 +4,7 @@
     "dependencies": {
         "jquery": "2.2.4",
         "d3": "3.5.*",
-        "d3plus": "1.9.3"
+        "d3plus": "1.9.3",
+        "d3-selectable": "mbaez/d3-selectable"
     }
 }
