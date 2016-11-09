@@ -90,7 +90,8 @@ function ConfigBuilder() {
         listBubble: {
             minRadius: 2,
             maxRadius: 25,
-            padding: 5
+            padding: 5,
+            textWidth: 200
         },
 
         /**

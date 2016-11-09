@@ -90,12 +90,10 @@ ListBuilder.prototype.buildFilter = function () {
         var data = $target["__data__"];
         if (typeof data != "undefined") {
             thiz.activeFilters[data.attr] = data.value;
-            console.log(thiz.activeFilters);
             thiz.builder(thiz.pData);
         }
     });
 }
-
 
 /**
  * Prepare the data for the vizualization
@@ -145,22 +143,39 @@ ListBuilder.prototype.prepareData = function (data) {
     return tmp;
 }
 
+
 /**
  * Este método se encarga de calcular las escala a utilizar para generar 
- * el gráfico.
+ * el gráfico. Además se encarga de generar los intervalos de la parte superior
+ * del gráfico.
+ * @param   {Array} data los datos q
+ * @returns {[[Type]]} [[Description]]
  */
 ListBuilder.prototype.prepareScale = function (data) {
     var len = this.groups.length;
-    this.w = this.rowSize() * len;
-    this.x = d3.scale.linear().range([this.rowSize(), this.w]);
+    this.groups = this.groups.sort(function (a, b) {
+        return (a - b);
+    });
+    var rsize = this.rowSize();
+    this.w = rsize * len + rsize + this.config.listBubble.textWidth;
+    rsize += rsize + this.config.listBubble.textWidth;
+    var range = [];
+    var ri = rsize;
+    for (var i = 1; i <= len; i++) {
+        range.push(rsize);
+        rsize += this.rowSize();
+    }
+    this.x = d3.scale.ordinal()
+        .domain(this.groups)
+        .range(range);
     this.xAxis = d3.svg.axis().scale(this.x).orient("top");
     if (typeof this.config.xAxis.format !== "undefined") {
         this.xAxis.tickFormat(this.config.xAxis.format);
     }
-    this.x.domain([data.min, data.max]);
-    this.xScale = d3.scale.linear()
-        .domain([data.min, data.max])
-        .range([this.rowSize(), this.w]);
+
+    this.xScale = d3.scale.ordinal()
+        .domain(this.groups)
+        .range(range);
 
 }
 
@@ -213,6 +228,12 @@ ListBuilder.prototype.circle = function (g, data) {
     return circles;
 }
 
+/**
+ * Se encarga de generar el nodo de texto que se encuentra bajo la burbuja que es 
+ * visible cuando se dispara el evento hover.
+ * @param   {d3.element}   g    El nodo al cual pertenecerá el texto.
+ * @param   {object}   data el json con los datos del nodo.
+ */
 ListBuilder.prototype.text = function (g, data) {
     var thiz = this;
     return g
@@ -232,10 +253,18 @@ ListBuilder.prototype.text = function (g, data) {
         .style("display", "none");
 }
 
+/**
+ * Este método se encarga de calcular el tamaño en pixeles que ocupa una burbuja teniendo en cuenta
+ * el radio máximo definido y el padding.
+ */
 ListBuilder.prototype.rowSize = function () {
     return (this.config.listBubble.maxRadius + this.config.listBubble.padding) * 2;
 }
 
+/**
+ * Se encarga de calcular el tamaño de las burbujas, teniendo en cuenta el rango definido por
+ * el máx y min radius.
+ */
 ListBuilder.prototype.scale = function (data) {
     var thiz = this;
     return d3.scale.linear()
@@ -245,6 +274,12 @@ ListBuilder.prototype.scale = function (data) {
         .range([this.config.listBubble.minRadius, this.config.listBubble.maxRadius]);
 }
 
+/**
+ * Se encarga de aplicar los filtros, en el caso que se ecuentren definidos, a los datos 
+ * de forma local. Se encarga de manejar el evento change filter.
+ * @param   {Array} data El conjunto de datos a cual se aplicará el filtrado
+ * @returns {Array} El conjunto de datos que cumple con los criterios de filtrado.
+ */
 ListBuilder.prototype.filtrar = function (data) {
     var thiz = this;
     var result = [];
@@ -270,7 +305,6 @@ ListBuilder.prototype.filtrar = function (data) {
             result.push(d);
         }
     }
-
     return result;
 }
 
@@ -308,7 +342,8 @@ ListBuilder.prototype.builder = function (data) {
         .attr("class", "node");
 
     var text = g.append("text")
-        .attr("x", this.w + px)
+        .attr("x", px)
+        .attr("width", this.config.listBubble.textWidth)
         .attr("y", function (d) {
             return d.y;
         })
@@ -317,6 +352,18 @@ ListBuilder.prototype.builder = function (data) {
             thiz.circle(d3.select(this.parentNode), d);
             thiz.text(d3.select(this.parentNode), d);
             return d[thiz.config.label]
+        })
+        .each(function () {
+            var width = thiz.config.listBubble.textWidth;
+            var padding = thiz.config.listBubble.padding;
+            var self = d3.select(this),
+                textLength = self.node().getComputedTextLength(),
+                text = self.text();
+            while (textLength > (width + 2 * padding) && text.length > 0) {
+                text = text.slice(0, -1);
+                self.text(text + '...');
+                textLength = self.node().getComputedTextLength();
+            }
         })
         .style("fill", function (d) {
             return thiz.config.color(d[thiz.config.colour])

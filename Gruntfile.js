@@ -118,6 +118,7 @@ module.exports = function (grunt) {
                 'src/vendors/jquery/dist/jquery.min.js',
                 'src/vendors/d3/d3.min.js',
                 'src/vendors/d3plus/d3plus.min.js',
+                'src/vendors/d3-selectable/d3.selectable.js',
                 'dist/js/bubbles-chart.min.js'
                 ],
                 dest: 'dist/js/bubbles-chart.full.js'
