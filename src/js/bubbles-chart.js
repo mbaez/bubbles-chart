@@ -8,7 +8,11 @@ function BubbleChart(options) {
         if (attr == 'format') {
             options.format = d3plus.object.merge(this.config.format, options.format);
         }
-        this.config[attr] = options[attr];
+        if (typeof this.config[attr] == "object") {
+            this.config[attr] = $.extend(this.config[attr], options[attr]);
+        } else {
+            this.config[attr] = options[attr];
+        }
     }
 
     //this.ui = new UiBuilder(this.config);
