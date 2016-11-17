@@ -59,9 +59,9 @@ UiBuilder.prototype.prepareContainer = function () {
 
     this.config.scope = this.config.container.replace("#", "");
     this.vizId = this.config.scope + "-viz";
-    if(typeof this.config.legendId == "undefined"){
+    if (typeof this.config.legendId == "undefined") {
         this.legendId = this.config.scope + "-legend";
-    }else{
+    } else {
         this.legendId = this.config.legendId
     }
     this.footerId = this.config.scope + "-footer";

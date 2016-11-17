@@ -61,7 +61,7 @@ MotionBubble.prototype.buildFilter = function () {
         var data = $target["__data__"];
         if (typeof data != "undefined") {
             if (data.value !== "all") {
-                if(thiz.config.autoHideLegend){
+                if (thiz.config.autoHideLegend) {
                     $("#" + thiz.legendId).hide();
                 }
                 thiz.groupAll(thiz.circles, data.value);
@@ -94,37 +94,38 @@ MotionBubble.prototype.calculateFilterCenter = function () {
     //var p = this.config.p;
     var xpadding = 80;
     var ypadding = 100;
-    var txtHeight = 40;
+    var txtHeight = 50;
     for (var attr in this.filters) {
         this.filterCenters[attr] = {};
         var len = this.filters[attr].length;
         cols = this.config.cols;
         cols = len < cols ? len : cols;
-        var nrows = parseInt(len / cols);
+        var nrows = Math.ceil(len / cols);
         nrows = nrows == 1 ? 2 : nrows;
         var dx = (this.width - xpadding * 2) / cols;
         var dy = (this.diameter - ypadding) / nrows;
         var idx = 1;
         var y0 = ypadding / 2;
-        var x0 = xpadding / 2;
+        //var x0 = xpadding / 2;
         var maxR = 0;
-        var prevX = 0;
+        var x0 = 0;
+        var maxY = 0;
         for (var i = 0; i < len; i++) {
             var strTmp = this.filters[attr][i];
             var fdata = this.filtersData[attr][strTmp];
             fdata.r = Math.sqrt(fdata.r);
             if (idx > cols) {
                 idx = 1;
-                y0 += dy + maxR + txtHeight;
+                y0 += dy + maxR + txtHeight + this.config.bubble.padding;
                 maxR = 0;
             }
             // se calcula la y
-            maxR = maxR < fdata.r ? fdata.r : maxR;
             var row = parseInt(i / cols);
-            var y = y0 + dy;
-            y += txtHeight;
+            var y = y0 + dy + txtHeight + this.config.bubble.padding;
+            //se calculan los maximos locales
+            maxY = maxY < y ? y : maxY;
+            maxR = maxR < fdata.r ? fdata.r : maxR;
             //se calcula la x
-
             var x = 0;
             //si es el primer filtercenter, se parte del xpadding.
             //Además el centro del primer filtro debe estar en dx/2
@@ -132,11 +133,10 @@ MotionBubble.prototype.calculateFilterCenter = function () {
                 x = xpadding + dx / 2;
             } else {
                 // el filtercenter actual debe encontrarse a dx del filtro anterior
-                x = prevX + dx;
+                x = x0 + dx;
             }
-
             //se almacena el x actual como x previa para la siguiente corrida
-            prevX = x;
+            x0 = x;
 
             //x = x - fdata.r * 0.3;
             //se actualiza el heigth
@@ -147,10 +147,11 @@ MotionBubble.prototype.calculateFilterCenter = function () {
                 size: fdata.size,
                 filter: strTmp
             }
-
             idx += 1;
         }
-        this.filtersData[attr]["MAX_Y"] = y + dy + maxR + ypadding;
+
+        var tmpy = maxY + maxR * 2 + dy + txtHeight + 2 * this.config.bubble.padding + ypadding;
+        this.filtersData[attr]["MAX_Y"] = tmpy;
     }
     //se redimensiona el container
     this.resizeViz(this.diameter + ypadding);
@@ -293,7 +294,7 @@ MotionBubble.prototype.builder = function (data) {
  *
  */
 MotionBubble.prototype.charge = function (d) {
-    return -Math.pow(d.r, 2.0) / 8;
+    return -Math.pow(d.r, 2) / 8;
 };
 
 MotionBubble.prototype.start = function () {
@@ -348,8 +349,9 @@ MotionBubble.prototype.groupAll = function (nodes, filter) {
             //si esta llamada es la última realizada, se dibujan los filtros sino se ignora
             if (thiz.currentFilterTime === curtime) {
                 thiz.displayFilters(filter);
+                thiz.resizeViz(thiz.filtersData[filter]["MAX_Y"]);
             }
-        }, this.config.bubble.animation * 0.75, currentTime)
+        }, this.config.bubble.animation * 0.8, currentTime)
     }
     this.force.start();
 };
@@ -385,14 +387,14 @@ MotionBubble.prototype.getLabelXY = function (filter) {
         x: 0,
         y: 0
     };
-
+    var p = this.config.bubble.padding;
     $("#" + this.vizId).find("[data-filter= '" + filter + "']")
         .each(function (e) {
             var cx = parseFloat($(this).attr("cx"));
             var cy = parseFloat($(this).attr("cy"));
             var r = parseFloat($(this).attr("r"));
             xy.x = xy.x == 0 || (cx - r) < xy.x ? cx - r : xy.x;
-            xy.y = xy.y == 0 || (cy + r * 2) > xy.y ? cy + r * 2 : xy.y;
+            xy.y = xy.y == 0 || (cy + r * 2) > xy.y ? cy + r + 2 * p : xy.y;
         });
     return xy;
 }
@@ -409,7 +411,8 @@ MotionBubble.prototype.text = function (node, center, filter) {
             var dt = center[d];
             var pts = thiz.getLabelXY(d);
             pts.x += dt.r;
-            pts.y += 25;
+            pts.y += thiz.config.bubble.padding;
+            thiz.filtersData[filter]["MAX_Y"] = pts.y + 100;
             return "translate(" + pts.x + "," + pts.y + ")";
         })
         .attr("text-anchor", "middle");
@@ -418,7 +421,19 @@ MotionBubble.prototype.text = function (node, center, filter) {
         .attr("class", "labels")
         .text(function (d) {
             return thiz.config.format.text(d);
-        });
+        })
+        .each(function () {
+            var width = thiz.config.listBubble.textWidth;
+            var padding = thiz.config.bubble.padding;
+            var node = d3.select(this),
+                textLength = node.node().getComputedTextLength(),
+                text = node.text();
+            while (textLength > (width + 2 * padding) && text.length > 0) {
+                text = text.slice(0, -1);
+                node.text(text + '...');
+                textLength = node.node().getComputedTextLength();
+            }
+        })
 
     var ntxt = g.append("text")
         .attr("class", "size")

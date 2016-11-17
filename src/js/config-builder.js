@@ -80,7 +80,9 @@ function ConfigBuilder() {
         bubble: {
             minRadius: 10,
             //maxRadius : dinamico
-            animation: 2000
+            maxRadius: 50,
+            animation: 2000,
+            padding: 10,
         },
         cols: 5,
         autoHideLegend: true,
