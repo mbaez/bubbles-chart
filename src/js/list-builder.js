@@ -152,10 +152,20 @@ ListBuilder.prototype.prepareData = function (data) {
  * @returns {[[Type]]} [[Description]]
  */
 ListBuilder.prototype.prepareScale = function (data) {
+    var thiz = this;
     var len = this.groups.length;
+    var isStr =false;
     this.groups = this.groups.sort(function (a, b) {
+        if(!isStr){
+            isStr = isNaN(a);
+        }
         return (a - b);
     });
+
+    if(isStr){
+        this.groups = this.groups.sort();
+    }
+
     var rsize = this.rowSize();
     this.w = rsize * len + this.config.listBubble.textWidth;
     rsize += this.config.listBubble.textWidth;
