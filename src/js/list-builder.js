@@ -145,7 +145,7 @@ ListBuilder.prototype.prepareData = function (data) {
 
 
 /**
- * Este método se encarga de calcular las escala a utilizar para generar 
+ * Este método se encarga de calcular las escala a utilizar para generar
  * el gráfico. Además se encarga de generar los intervalos de la parte superior
  * del gráfico.
  * @param   {Array} data los datos q
@@ -157,8 +157,8 @@ ListBuilder.prototype.prepareScale = function (data) {
         return (a - b);
     });
     var rsize = this.rowSize();
-    this.w = rsize * len + rsize + this.config.listBubble.textWidth;
-    rsize += rsize + this.config.listBubble.textWidth;
+    this.w = rsize * len + this.config.listBubble.textWidth;
+    rsize += this.config.listBubble.textWidth;
     var range = [];
     var ri = rsize;
     for (var i = 1; i <= len; i++) {
@@ -229,7 +229,7 @@ ListBuilder.prototype.circle = function (g, data) {
 }
 
 /**
- * Se encarga de generar el nodo de texto que se encuentra bajo la burbuja que es 
+ * Se encarga de generar el nodo de texto que se encuentra bajo la burbuja que es
  * visible cuando se dispara el evento hover.
  * @param   {d3.element}   g    El nodo al cual pertenecerá el texto.
  * @param   {object}   data el json con los datos del nodo.
@@ -258,7 +258,9 @@ ListBuilder.prototype.text = function (g, data) {
  * el radio máximo definido y el padding.
  */
 ListBuilder.prototype.rowSize = function () {
-    return (this.config.listBubble.maxRadius + this.config.listBubble.padding) * 2;
+    return (this.width -this.config.padding* 2 - this.config.listBubble.textWidth )/(this.groups.length +1);
+
+    //return (this.config.listBubble.maxRadius + this.config.listBubble.padding) * 2;
 }
 
 /**
@@ -267,15 +269,17 @@ ListBuilder.prototype.rowSize = function () {
  */
 ListBuilder.prototype.scale = function (data) {
     var thiz = this;
+    var max =  this.rowSize() - this.config.listBubble.padding *2;
+    max =  max/2;
     return d3.scale.linear()
         .domain([0, d3.max(data['values'], function (d) {
             return d[thiz.config.size];
         })])
-        .range([this.config.listBubble.minRadius, this.config.listBubble.maxRadius]);
+        .range([this.config.listBubble.minRadius, max]);
 }
 
 /**
- * Se encarga de aplicar los filtros, en el caso que se ecuentren definidos, a los datos 
+ * Se encarga de aplicar los filtros, en el caso que se ecuentren definidos, a los datos
  * de forma local. Se encarga de manejar el evento change filter.
  * @param   {Array} data El conjunto de datos a cual se aplicará el filtrado
  * @returns {Array} El conjunto de datos que cumple con los criterios de filtrado.
@@ -323,7 +327,7 @@ ListBuilder.prototype.builder = function (data) {
         .attr("height", this.diameter);
     var px = this.rowSize();
     var node = svg.append("g")
-        .attr("transform", "translate(" + 0 + "," + thiz.config.listBubble.maxRadius + ")");
+        .attr("transform", "translate(" + 0 + "," + (px/2)+ ")");
     //se renderiza
     function getY(d) {
         index += 1;
@@ -342,7 +346,8 @@ ListBuilder.prototype.builder = function (data) {
         .attr("class", "node");
 
     var text = g.append("text")
-        .attr("x", px)
+        .style("font-size", "14px")
+        .attr("x", thiz.config.listBubble.padding )
         .attr("width", this.config.listBubble.textWidth)
         .attr("y", function (d) {
             return d.y;
