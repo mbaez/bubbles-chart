@@ -150,7 +150,7 @@ MotionBubble.prototype.calculateFilterCenter = function () {
             idx += 1;
         }
 
-        var tmpy = maxY + maxR * 2 + dy + txtHeight + 2 * this.config.bubble.padding + ypadding;
+        var tmpy = maxY + maxR * 2 + dy + 2 * txtHeight + 2 * this.config.bubble.padding + ypadding;
         this.filtersData[attr]["MAX_Y"] = tmpy;
     }
     //se redimensiona el container
@@ -220,9 +220,26 @@ MotionBubble.prototype.buildNodes = function (data, filter) {
         .domain([min, max])
         .range([this.config.bubble.minRadius, maxR]);
 
+    //se obtienen todos los keys que definen los colores para 
+    //aplicar la clusterización
+    this.clusters = [];
+    if (thiz.config.cluster) {
+        for (var key in this.filtersData[this.config.colour]) {
+            if (key != "MAX_Y") {
+                this.clusters.push(key);
+            }
+        }
+        this.deltaY = Math.floor(this.diameter / this.clusters.length);
+    }
+
     darray.forEach(function (d) {
-        d.x = Math.random() * thiz.width;
-        d.y = Math.random() * thiz.diameter;
+        if (thiz.config.cluster) {
+            d.clusterX = thiz.center.x;
+            d.clusterY = thiz.deltaY + (thiz.clusters.indexOf(d[thiz.config.colour])) * thiz.deltaY;
+        } else {
+            d.x = Math.random() * thiz.width;
+            d.y = Math.random() * thiz.diameter;
+        }
         d.value = d[thiz.config.size];
         d.r = thiz.rscale(d.value);
         // se sumarizan los radios de los elementos a filtrar
@@ -315,32 +332,86 @@ MotionBubble.prototype.tickNodes = function (e, moveCallback) {
         });
 }
 
+MotionBubble.prototype.clusterGroup = function (filter, end) {
+    var thiz = this;
+    var xpadding = 80;
+    if (filter == this.config.colour) {
+        return;
+    }
+    this.force
+        .gravity(this.layoutGravity)
+        .charge(this.charge)
+        .friction(0.8)
+        .on('tick', function (e) {
+            thiz.circles
+                .each(function (d) {
+                    if (typeof filter == "undefined") {
+                        //return thiz.moveTowardsCenter(e.alpha, true);
+                        d.x += (thiz.center.x - d.x) * thiz.damper * e.alpha;
+                        d.y += (thiz.center.y - d.y) * thiz.damper * e.alpha;
+                    } else {
+                        var target = thiz.filterCenters[filter][d[filter]];
+                        d3.select(this).attr("data-filter", d[filter]);
+                        d.x = d.x + (target.x - d.x) * thiz.damper * e.alpha;
+                        d.x = d.x <= 0 ? d.r * 2 : d.x;
+                        d.x = (d.x + d.r) > thiz.width + xpadding ? d.x - d.r : d.x;
+                        d.y = d.y + (target.y - d.y) * thiz.damper * e.alpha;
+                    }
+                })
+                .attr("cx", function (d) {
+                    return d.x;
+                })
+                .attr("cy", function (d) {
+                    return d.y;
+                });
+        });
+
+    if (!end) {
+        this.force.start();
+        end = true;
+    }
+
+}
+
+/**
+ * Se encarga de disparar la agrupación de las burbujas teniendo en cuenta los
+ * criterios de filtrado establecidos.
+ * @param   {[[Type]]} nodes  [[Description]]
+ * @param   {String} filter el criterio de filtrado del gráfico.
+ */
 MotionBubble.prototype.groupAll = function (nodes, filter) {
     var thiz = this;
-
+    var end = false;
     //momento en el que se realizó esta llamada
-    currentTime = new Date().getTime();
-
+    var currentTime = new Date().getTime();
     //se almacena en thiz la ultima llamada
     thiz.currentFilterTime = currentTime;
-
     thiz.hideFilters();
     this.force
         .gravity(this.layoutGravity)
         .charge(this.charge)
-        .friction(0.9)
+        .friction(0.8)
         .on("tick", function (e) {
             thiz.tickNodes(e, function (alpha) {
-                if (typeof filter != "undefined") {
-                    return thiz.moveTowardsFilter(alpha, filter);
+                if (typeof filter !== "undefined") {
+                    if (thiz.config.colour !== filter && alpha < 0.01) {
+                        thiz.force.stop();
+                    } else {
+                        return thiz.moveTowardsFilter(alpha, filter);
+                    }
+                } else if (alpha < 0.01) {
+                    thiz.force.stop();
                 }
                 return thiz.moveTowardsCenter(alpha);
             });
+        }).on('end', function () {
+            if (thiz.config.cluster) {
+                thiz.clusterGroup(filter, end);
+            }
         });
 
     if (typeof filter != "undefined") {
         this.resizeViz(this.filtersData[filter]["MAX_Y"]);
-
         /*
         Se invoca al metodo que renderiza los labels de los grupos luego de
         1 segundo para darle tiempo a que las burbujas se reposicionen.
@@ -349,18 +420,19 @@ MotionBubble.prototype.groupAll = function (nodes, filter) {
             //si esta llamada es la última realizada, se dibujan los filtros sino se ignora
             if (thiz.currentFilterTime === curtime) {
                 thiz.displayFilters(filter);
-                thiz.resizeViz(thiz.filtersData[filter]["MAX_Y"]);
             }
         }, this.config.bubble.animation * 0.8, currentTime)
     }
     this.force.start();
 };
 
-MotionBubble.prototype.moveTowardsCenter = function (alpha) {
+MotionBubble.prototype.moveTowardsCenter = function (alpha, center) {
     var thiz = this;
+    var ty = 0
     return function (d) {
-        d.x = d.x + (thiz.center.x - d.x) * (thiz.damper) * alpha;
-        return d.y = d.y + (thiz.center.y - d.y) * (thiz.damper) * alpha;
+        ty = thiz.config.cluster && !center ? d.clusterY : thiz.center.y;
+        d.x = d.x + (thiz.center.x - d.x) * thiz.damper * alpha;
+        return d.y = d.y + (ty - d.y) * thiz.damper * alpha;
     };
 };
 
@@ -370,10 +442,23 @@ MotionBubble.prototype.moveTowardsFilter = function (alpha, filter) {
     return function (d) {
         var target = thiz.filterCenters[filter][d[filter]];
         d3.select(this).attr("data-filter", d[filter]);
-        d.x = d.x + (target.x - d.x) * thiz.damper * alpha;
-        d.x = d.x <= 0 ? d.r * 2 : d.x;
-        d.x = (d.x + d.r) > thiz.width + xpadding ? d.x - d.r : d.x;
-        d.y = d.y + (target.y - d.y) * thiz.damper * alpha;
+        if (filter !== thiz.config.colour && thiz.config.cluster) {
+            var deltaY = Math.round((target.r) / thiz.clusters.length);
+
+            var targetY = deltaY + thiz.clusters.indexOf(d[thiz.config.colour]) * deltaY; //+ target.y;
+            d.x = d.x + (target.x - d.x) * thiz.damper * alpha;
+            d.x = d.x <= 0 ? d.r * 2 : d.x;
+            d.x = (d.x + d.r) > thiz.width + xpadding ? d.x - d.r : d.x;
+            d.y = d.y + (targetY - d.y) * thiz.damper * alpha;
+            //return;
+        } else {
+            d.x = d.x + (target.x - d.x) * thiz.damper * alpha;
+            d.x = d.x <= 0 ? d.r * 2 : d.x;
+            d.x = (d.x + d.r) > thiz.width + xpadding ? d.x - d.r : d.x;
+            d.y = d.y + (target.y - d.y) * thiz.damper * alpha;
+        }
+        return d.y;
+
     };
 }
 
@@ -382,7 +467,6 @@ MotionBubble.prototype.moveTowardsFilter = function (alpha, filter) {
  * para determinar la ubicación de los labels.
  */
 MotionBubble.prototype.getLabelXY = function (filter) {
-
     var xy = {
         x: 0,
         y: 0
@@ -412,7 +496,10 @@ MotionBubble.prototype.text = function (node, center, filter) {
             var pts = thiz.getLabelXY(d);
             pts.x += dt.r;
             pts.y += thiz.config.bubble.padding;
-            thiz.filtersData[filter]["MAX_Y"] = pts.y + 100;
+            if (thiz.filtersData[filter]["MAX_Y"] <= pts.y) {
+                thiz.filtersData[filter]["MAX_Y"] = pts.y + 100;
+                thiz.resizeViz(thiz.filtersData[filter]["MAX_Y"]);
+            }
             return "translate(" + pts.x + "," + pts.y + ")";
         })
         .attr("text-anchor", "middle");
@@ -433,7 +520,7 @@ MotionBubble.prototype.text = function (node, center, filter) {
                 node.text(text + '...');
                 textLength = node.node().getComputedTextLength();
             }
-        })
+        });
 
     var ntxt = g.append("text")
         .attr("class", "size")

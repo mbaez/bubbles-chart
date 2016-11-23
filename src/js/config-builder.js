@@ -77,6 +77,7 @@ function ConfigBuilder() {
             speed: 3000,
             method: "no-recursive"
         },
+        cluster: true,
         bubble: {
             minRadius: 10,
             //maxRadius : dinamico
