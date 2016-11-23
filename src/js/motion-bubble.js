@@ -6,6 +6,10 @@ function MotionBubble(config) {
     this.rscale = 0;
     this.damper = 0.15;
     this.layoutGravity = -0.01;
+    this.xpadding = 80;
+    this.ypadding = 100;
+    this.txtHeight = 50;
+
     if (config) {
         this.initialize();
     }
@@ -91,10 +95,6 @@ MotionBubble.prototype.calculateFilterCenter = function () {
     this.filterCenters = {};
     var $viz = $("#" + this.vizId);
     var cols = this.config.cols;
-    //var p = this.config.p;
-    var xpadding = 80;
-    var ypadding = 100;
-    var txtHeight = 50;
     for (var attr in this.filters) {
         this.filterCenters[attr] = {};
         var len = this.filters[attr].length;
@@ -102,10 +102,10 @@ MotionBubble.prototype.calculateFilterCenter = function () {
         cols = len < cols ? len : cols;
         var nrows = Math.ceil(len / cols);
         nrows = nrows == 1 ? 2 : nrows;
-        var dx = (this.width - xpadding * 2) / cols;
-        var dy = (this.diameter - ypadding) / nrows;
+        var dx = (this.width - this.xpadding * 2) / cols;
+        var dy = (this.diameter - this.ypadding) / nrows;
         var idx = 1;
-        var y0 = ypadding / 2;
+        var y0 = this.ypadding / 2;
         //var x0 = xpadding / 2;
         var maxR = 0;
         var x0 = 0;
@@ -116,12 +116,12 @@ MotionBubble.prototype.calculateFilterCenter = function () {
             fdata.r = Math.sqrt(fdata.r);
             if (idx > cols) {
                 idx = 1;
-                y0 += dy + maxR + txtHeight + this.config.bubble.padding;
+                y0 += dy + maxR + this.txtHeight + this.config.bubble.padding;
                 maxR = 0;
             }
             // se calcula la y
             var row = parseInt(i / cols);
-            var y = y0 + dy + txtHeight + this.config.bubble.padding;
+            var y = y0 + dy + this.txtHeight + this.config.bubble.padding;
             //se calculan los maximos locales
             maxY = maxY < y ? y : maxY;
             maxR = maxR < fdata.r ? fdata.r : maxR;
@@ -130,7 +130,7 @@ MotionBubble.prototype.calculateFilterCenter = function () {
             //si es el primer filtercenter, se parte del xpadding.
             //Además el centro del primer filtro debe estar en dx/2
             if (idx === 1) {
-                x = xpadding + dx / 2;
+                x = this.xpadding + dx / 2;
             } else {
                 // el filtercenter actual debe encontrarse a dx del filtro anterior
                 x = x0 + dx;
@@ -150,11 +150,11 @@ MotionBubble.prototype.calculateFilterCenter = function () {
             idx += 1;
         }
 
-        var tmpy = maxY + maxR * 2 + dy + 2 * txtHeight + 2 * this.config.bubble.padding + ypadding;
+        var tmpy = maxY + maxR * 2 + dy + 2 * this.txtHeight + 2 * this.config.bubble.padding + this.ypadding;
         this.filtersData[attr]["MAX_Y"] = tmpy;
     }
     //se redimensiona el container
-    this.resizeViz(this.diameter + ypadding);
+    this.resizeViz(this.diameter + this.ypadding);
 }
 
 
@@ -235,7 +235,7 @@ MotionBubble.prototype.buildNodes = function (data, filter) {
     darray.forEach(function (d) {
         if (thiz.config.cluster) {
             d.clusterX = thiz.center.x;
-            d.clusterY = thiz.deltaY + (thiz.clusters.indexOf(d[thiz.config.colour])) * thiz.deltaY;
+            d.clusterY = (thiz.clusters.indexOf(d[thiz.config.colour]) + 1) * thiz.deltaY;
         } else {
             d.x = Math.random() * thiz.width;
             d.y = Math.random() * thiz.diameter;
@@ -295,12 +295,7 @@ MotionBubble.prototype.builder = function (data) {
         });
 
     this.bindMouseEvents(this.circles);
-    this.circles.transition()
-        .duration(this.config.bubble.animation)
-        .attr("r", function (d) {
-            return d.r;
-        })
-    this.start();
+    this.force = this.start();
     this.groupAll(this.circles);
     if (this.config.legend) {
         this.legend();
@@ -315,11 +310,22 @@ MotionBubble.prototype.charge = function (d) {
 };
 
 MotionBubble.prototype.start = function () {
-    this.force = d3.layout.force()
+    this.circles.transition()
+        .ease('linear')
+        .duration(this.config.bubble.animation)
+        .attr("r", function (d) {
+            return d.r;
+        });
+    return d3.layout.force()
         .nodes(this.nodes)
         .size([this.width, this.diameter]);
 };
-
+/**
+ * Tick advances the simulation by one time step. That is, the forces on the nodes are 
+ * calculated and their positions based on those forces.
+ * @param   {object}   e event tick
+ * @param   {function} moveCallback callback que se invoca por cada paso de la simulación.
+ */
 MotionBubble.prototype.tickNodes = function (e, moveCallback) {
     var thiz = this;
     this.circles
@@ -332,44 +338,26 @@ MotionBubble.prototype.tickNodes = function (e, moveCallback) {
         });
 }
 
-MotionBubble.prototype.clusterGroup = function (filter, end) {
+MotionBubble.prototype.clusterGroup = function (filter) {
     var thiz = this;
-    var xpadding = 80;
     if (filter == this.config.colour) {
         return;
     }
+    //console.log("cluster");
     this.force
-        .gravity(this.layoutGravity)
-        .charge(this.charge)
-        .friction(0.8)
         .on('tick', function (e) {
-            thiz.circles
-                .each(function (d) {
-                    if (typeof filter == "undefined") {
-                        //return thiz.moveTowardsCenter(e.alpha, true);
-                        d.x += (thiz.center.x - d.x) * thiz.damper * e.alpha;
-                        d.y += (thiz.center.y - d.y) * thiz.damper * e.alpha;
-                    } else {
-                        var target = thiz.filterCenters[filter][d[filter]];
-                        d3.select(this).attr("data-filter", d[filter]);
-                        d.x = d.x + (target.x - d.x) * thiz.damper * e.alpha;
-                        d.x = d.x <= 0 ? d.r * 2 : d.x;
-                        d.x = (d.x + d.r) > thiz.width + xpadding ? d.x - d.r : d.x;
-                        d.y = d.y + (target.y - d.y) * thiz.damper * e.alpha;
-                    }
-                })
-                .attr("cx", function (d) {
-                    return d.x;
-                })
-                .attr("cy", function (d) {
-                    return d.y;
-                });
+            thiz.tickNodes(e, function (alpha) {
+                if (typeof filter == "undefined") {
+                    return thiz.moveTowardsCenter(e.alpha, true);
+                } else {
+                    return thiz.moveTowardsFilter(e.alpha, filter, true);
+                }
+            });
         });
 
-    if (!end) {
-        this.force.start();
-        end = true;
-    }
+
+    this.force.start();
+
 
 }
 
@@ -390,23 +378,26 @@ MotionBubble.prototype.groupAll = function (nodes, filter) {
     this.force
         .gravity(this.layoutGravity)
         .charge(this.charge)
-        .friction(0.8)
+        .friction(this.config.firction)
         .on("tick", function (e) {
             thiz.tickNodes(e, function (alpha) {
                 if (typeof filter !== "undefined") {
-                    if (thiz.config.colour !== filter && alpha < 0.01) {
+                    if (alpha < 0.08 && thiz.config.cluster && thiz.config.colour != filter) {
                         thiz.force.stop();
-                    } else {
-                        return thiz.moveTowardsFilter(alpha, filter);
                     }
-                } else if (alpha < 0.01) {
+                    return thiz.moveTowardsFilter(alpha, filter, false);
+
+                } else if (alpha < 0.04 && thiz.config.cluster) {
                     thiz.force.stop();
                 }
-                return thiz.moveTowardsCenter(alpha);
+                return thiz.moveTowardsCenter(alpha, false);
             });
         }).on('end', function () {
-            if (thiz.config.cluster) {
-                thiz.clusterGroup(filter, end);
+
+            if (thiz.config.cluster && !end) {
+                thiz.force.stop();
+                thiz.clusterGroup(filter);
+                end = true;
             }
         });
 
@@ -421,7 +412,7 @@ MotionBubble.prototype.groupAll = function (nodes, filter) {
             if (thiz.currentFilterTime === curtime) {
                 thiz.displayFilters(filter);
             }
-        }, this.config.bubble.animation * 0.8, currentTime)
+        }, this.config.bubble.animation * 0.8, currentTime);
     }
     this.force.start();
 };
@@ -436,29 +427,24 @@ MotionBubble.prototype.moveTowardsCenter = function (alpha, center) {
     };
 };
 
-MotionBubble.prototype.moveTowardsFilter = function (alpha, filter) {
+MotionBubble.prototype.moveTowardsFilter = function (alpha, filter, center) {
     var thiz = this;
-    var xpadding = 80;
     return function (d) {
         var target = thiz.filterCenters[filter][d[filter]];
         d3.select(this).attr("data-filter", d[filter]);
-        if (filter !== thiz.config.colour && thiz.config.cluster) {
-            var deltaY = Math.round((target.r) / thiz.clusters.length);
-
-            var targetY = deltaY + thiz.clusters.indexOf(d[thiz.config.colour]) * deltaY; //+ target.y;
-            d.x = d.x + (target.x - d.x) * thiz.damper * alpha;
-            d.x = d.x <= 0 ? d.r * 2 : d.x;
-            d.x = (d.x + d.r) > thiz.width + xpadding ? d.x - d.r : d.x;
-            d.y = d.y + (targetY - d.y) * thiz.damper * alpha;
-            //return;
+        var ty = target.y;
+        if (filter !== thiz.config.colour && thiz.config.cluster && !center) {
+            var deltaY = Math.floor((target.r) / thiz.clusters.length);
+            ty += (thiz.clusters.indexOf(d[thiz.config.colour]) + 1) * deltaY;
         } else {
-            d.x = d.x + (target.x - d.x) * thiz.damper * alpha;
-            d.x = d.x <= 0 ? d.r * 2 : d.x;
-            d.x = (d.x + d.r) > thiz.width + xpadding ? d.x - d.r : d.x;
-            d.y = d.y + (target.y - d.y) * thiz.damper * alpha;
-        }
-        return d.y;
 
+        }
+
+        d.x = d.x + (target.x - d.x) * thiz.damper * alpha;
+        d.x = d.x <= 0 ? d.r * 2 : d.x;
+        d.x = (d.x + d.r) > thiz.width + thiz.xpadding ? d.x - d.r : d.x;
+        d.y = d.y + (ty - d.y) * thiz.damper * alpha;
+        return d.y;
     };
 }
 
@@ -497,7 +483,7 @@ MotionBubble.prototype.text = function (node, center, filter) {
             pts.x += dt.r;
             pts.y += thiz.config.bubble.padding;
             if (thiz.filtersData[filter]["MAX_Y"] <= pts.y) {
-                thiz.filtersData[filter]["MAX_Y"] = pts.y + 100;
+                thiz.filtersData[filter]["MAX_Y"] = pts.y + thiz.ypadding;
                 thiz.resizeViz(thiz.filtersData[filter]["MAX_Y"]);
             }
             return "translate(" + pts.x + "," + pts.y + ")";
@@ -546,7 +532,7 @@ MotionBubble.prototype.displayFilters = function (attr) {
 
 MotionBubble.prototype.hideFilters = function () {
     d3.select("#" + this.vizId).selectAll(".filters").remove();
-    this.resizeViz(this.diameter);
+    this.resizeViz(this.diameter + this.ypadding);
 };
 
 
@@ -558,7 +544,7 @@ MotionBubble.prototype.legend = function () {
     var rmax = thiz.rscale(this.sizeData.max);
 
     var container = d3.select("#" + this.legendId)
-        .style("margin-top", (-(rmax * 3 + 100)) + "px")
+        .style("margin-top", (-(rmax * 3 + this.ypadding)) + "px")
         .attr("class", "legend-container");
 
     var overview = container.append("div").attr("class", "legend-overview");

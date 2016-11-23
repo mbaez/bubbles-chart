@@ -78,6 +78,7 @@ function ConfigBuilder() {
             method: "no-recursive"
         },
         cluster: true,
+        firction: 0.85,
         bubble: {
             minRadius: 10,
             //maxRadius : dinamico
