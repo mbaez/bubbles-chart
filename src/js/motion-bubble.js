@@ -216,19 +216,19 @@ MotionBubble.prototype.buildNodes = function (data, filter) {
     var nChilds = darray.length - 10;
     nChilds = nChilds < 5 ? 5 : nChilds;
     nChilds = nChilds > 30 ? 30 : nChilds;
-    var maxR = this.width / (nChilds + 1);
+    var maxR = this.width / (nChilds);
     // se verifica si no se especificó un máx radius en la coniguración del gráfico.
     var tmpR = typeof this.config.bubble.maxRadius != "undefined" ? this.config.bubble.maxRadius : maxR;
     // si el max radius es mayor al radio calculado se utiliza el calculado ya que esto implica que no
     // hay espacio suficiente para constuir las burubujas con el tamaño especificado.
     maxR = tmpR > maxR ? maxR : tmpR;
     this.config.bubble.maxRadius = maxR;
-    // se establece que el tamaño de la menor burbuja es como máximo 5 veces menor que el tamaǹo del max radius.
-    this.config.bubble.minRadius = Math.floor(maxR / 5);
+    // se establece que el tamaño de la menor burbuja es como máximo 3 veces menor que el tamaǹo del max radius.
+    this.config.bubble.minRadius = Math.floor(maxR / 3);
     this.rscale = d3.scale.pow()
         .exponent(0.5)
         .domain([min, max])
-        .range([this.config.bubble.minRadius, maxR]);
+        .range([this.config.bubble.minRadius, this.config.bubble.maxRadius]);
 
     //se obtienen todos los keys que definen los colores para 
     //aplicar la clusterización
