@@ -59,36 +59,30 @@ UiBuilder.prototype.prepareContainer = function () {
 
     this.config.scope = this.config.container.replace("#", "");
     this.vizId = this.config.scope + "-viz";
-    if (typeof this.config.legendId == "undefined") {
-        this.legendId = this.config.scope + "-legend";
-    } else {
-        this.legendId = this.config.legendId
+    //construye el div que corrresponde a la leyenda del gráfico.
+    this.legendId = this.config.scope + "-legend";
+    if (typeof this.config.legendId != "undefined") {
+        this.legendId = this.config.legendId;
+    }
+    //se calcula el id del contenedor de la leyenda que explica los colores.
+    this.legendColorId = this.config.scope + "-legend-color";
+    if (typeof this.config.legendColorId !== "undefined") {
+        this.legendColorId = this.config.legendColorId;
     }
     this.footerId = this.config.scope + "-footer";
     this.headerId = this.config.scope + "-header";
-
-    var $header = $("<div />");
-    $header.attr("id", this.headerId);
-
-    var $viz = $("<div />");
-    $viz.attr("id", this.vizId);
-
-    var $legend = $("<div />");
-    $legend.attr("id", this.legendId);
-
-    var $footer = $("<div />");
-    $footer.attr("id", this.footerId);
-
+    var ids = [this.headerId, this.vizId, this.legendId, this.legendColorId, this.footerId];
+    var clases = ["bubble-header", "bubble-viz", "bubble-legend", "bubble-colors", "bubble-footer"];
+    var $divs = {};
     $(this.config.container).addClass("bubble-chart");
-    $viz.addClass("bubble-viz");
-
-    $(this.config.container).append($header);
-    $(this.config.container).append($viz);
-    $(this.config.container).append($legend);
-    $(this.config.container).append($footer);
-
-    $viz.height(this.diameter);
-    $viz.width(this.diameter);
+    for (var i = 0; i < ids.length; i++) {
+        $divs[ids[i]] = $("<div />");
+        $divs[ids[i]].attr("id", ids[i]);
+        $divs[ids[i]].addClass(clases[i]);
+        $(this.config.container).append($divs[ids[i]]);
+    }
+    $divs[this.vizId].height(this.diameter);
+    $divs[this.vizId].width(this.diameter);
 }
 
 
