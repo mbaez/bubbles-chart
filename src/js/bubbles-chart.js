@@ -2,7 +2,7 @@
  * Bubble chart visualization builder
  * @param{Config} options
  */
-function BubbleChart(options) {
+function _BubbleChart(options) {
     this.config = new ConfigBuilder();
     for (var attr in options) {
         if (attr == 'format') {
@@ -33,13 +33,13 @@ function BubbleChart(options) {
  * Set visualization data.
  * @param{Array} data
  */
-BubbleChart.prototype.data = function (data) {
+_BubbleChart.prototype.data = function (data) {
     this.builder.data(data);
 }
 
 /**
  * @param event values click|timechange|mouseover|mouseout|mouseenter
  */
-BubbleChart.prototype.on = function (event, handler) {
+_BubbleChart.prototype.on = function (event, handler) {
     this.builder.event[event] = handler;
 }

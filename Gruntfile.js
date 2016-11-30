@@ -1,5 +1,5 @@
 /**
- *Minimize del frontend
+ * Minimize del frontend
  * 1) connect
  * 2) open
  * 3) sass
@@ -11,7 +11,6 @@
  * 9) usebanner
  * 10) watch
  */
-
 module.exports = function (grunt) {
     require("matchdep").filterDev("grunt-*").forEach(grunt.loadNpmTasks);
     // Project configuration.
@@ -31,11 +30,13 @@ module.exports = function (grunt) {
                 }
             }
         },
+
         open: {
             all: {
-                path: 'http://localhost:8889'
+                path: 'http://localhost:8889/test'
             }
         },
+
         sass: {
             dist: {
                 options: {
@@ -62,16 +63,19 @@ module.exports = function (grunt) {
 
         uglify: {
             options: {
-                mangle: false,
-                sourceMap: false,
-                beautify: false
+                report: ['none', 'min', 'gzip'],
+                banner: "var BubbleChart =(function () {",
+                footer: " return _BubbleChart;})();",
+                mangle: {
+                    except: ['jQuery', '$', '_BubbleChart', 'd3', 'd3plus']
+                }
             },
             build: {
                 files: [{
                     expand: true,
-                    cwd: 'src/js',
+                    cwd: 'dist/tmp',
                     src: '*.js',
-                    dest: 'dist/tmp',
+                    dest: 'dist/js',
                     ext: '.js',
                     extDot: 'last'
                 }]
@@ -83,25 +87,8 @@ module.exports = function (grunt) {
             },
             libs: {
                 src: [
-                'dist/tmp/layout-orbit.js',
-                'dist/tmp/d3.selectable.js',
-                'dist/tmp/config-builder.js',
-                'dist/tmp/events.js',
-                'dist/tmp/base-builder.js',
-                'dist/tmp/ui-builder.js',
-                'dist/tmp/bubble-animation.js',
-                'dist/tmp/bubble-builder.js',
-                'dist/tmp/tree-builder.js',
-                'dist/tmp/orbit-builder.js',
-                'dist/tmp/list-builder.js',
-                'dist/tmp/motion-bubble.js',
-                'dist/tmp/bubbles-chart.js'
-                ],
-                dest: 'dist/js/bubbles-chart.min.js'
-            },
-            /*libsSrc: {
-                src: [
                 'src/js/layout-orbit.js',
+                'src/js/d3.selectable.js',
                 'src/js/config-builder.js',
                 'src/js/events.js',
                 'src/js/base-builder.js',
@@ -109,10 +96,13 @@ module.exports = function (grunt) {
                 'src/js/bubble-animation.js',
                 'src/js/bubble-builder.js',
                 'src/js/tree-builder.js',
+                'src/js/orbit-builder.js',
+                'src/js/list-builder.js',
+                'src/js/motion-bubble.js',
                 'src/js/bubbles-chart.js'
                 ],
-                dest: 'dist/js/bubbles-chart.min.js'
-            },*/
+                dest: 'dist/tmp/bubbles-chart.min.js'
+            },
             libsfull: {
                 src: [
                 'src/vendors/jquery/dist/jquery.min.js',
@@ -124,10 +114,14 @@ module.exports = function (grunt) {
                 dest: 'dist/js/bubbles-chart.full.js'
             }
         },
+
         remove: {
             default_options: {
                 trace: true,
                 dirList: ['dist/tmp']
+            },
+            clean: {
+                dirList: ['dist']
             }
         },
 
@@ -153,7 +147,7 @@ module.exports = function (grunt) {
                         '  * <%= pkg.name %> : <%= pkg.description %>\n' +
                         '  * @version <%= pkg.version %>\n' +
                         '  * @author <%= pkg.author %>\n' +
-                        '  */\n',
+                        '  */',
                     linebreak: true
                 },
                 files: {
@@ -180,7 +174,8 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.registerTask('default', ['uglify', 'sass', 'string-replace', 'concat', 'remove', 'usebanner']);
+    grunt.registerTask('default', ['concat:libs', 'uglify', 'sass', 'string-replace', 'concat:libsfull', 'remove:default_options', 'usebanner']);
     grunt.registerTask('build', ["default"]);
     grunt.registerTask('serve', ['default', 'copy', 'configureProxies:server', "open", 'connect:server', 'watch']);
+    grunt.registerTask('clean', ["remove:clean"]);
 };
