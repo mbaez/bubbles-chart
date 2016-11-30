@@ -3,6 +3,24 @@
  * @return {Config}
  */
 function ConfigBuilder() {
+
+    var colorPalette = [
+    "#FF6384",
+    "#4BC0C0",
+    "#FFCE56",
+    "#c2b9d6",
+    "#36A2EB",
+    "#8161c7",
+    "#196998",
+    "#8bc4eb",
+    "#4b36eb",
+    "#ffe197",
+    "#ffa4b7",
+    "#98e6e6",
+    "#c2b9d6",
+    "#36eb7c"
+    ];
+
     /**
      * @typedef Config
      * @type Object
@@ -25,7 +43,8 @@ function ConfigBuilder() {
         height: 500,
         sort: false,
         percentage: false,
-        color: d3plus.color.scale,
+        color: d3.scale.ordinal().range(colorPalette),
+        color: d3.scale.ordinal().range(colorPalette),
         /**
          * Atributo que define el color de las burbujas. Por defecto
          * se utiliza el label.

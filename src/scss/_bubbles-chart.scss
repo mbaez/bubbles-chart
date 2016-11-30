@@ -14,15 +14,55 @@ $border:#444444;
         shape-rendering: crispEdges;
     }
     .legend-container {
+        float: left;
+        display: block;
         color: $border;
+        width: 260px;
+        font-size: 14px;
+        text-align: justify;
         text {
             fill: $border;
+            font-size: 12px !important;
         }
         .legend {
             stroke-width: 1;
             stroke: $border;
             stroke-dasharray: 2 2;
             fill: none;
+        }
+        text,
+        .d3plus_node {
+            font-size: 14px !important;
+        }
+        .filters .size {
+            font-weight: bold;
+        }
+        svg {
+            width: 100%;
+            height: 100%;
+            margin-left: 70px;
+        }
+    }
+    .bubble-colors {
+        float: right;
+        margin-right: 15px;
+        ul {
+            padding: 0px;
+            li {
+                display: block;
+                .bubble-color {
+                    width: 15px;
+                    height: 15px;
+                    border-radius: 10px;
+                    display: inline-block;
+                    margin-right: 5px;
+                }
+                .color-label {
+                    font-size: 14px;
+                    display: inline-block;
+                    margin: 2px;
+                }
+            }
         }
     }
     .tick text {
