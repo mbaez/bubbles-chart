@@ -510,8 +510,12 @@ MotionBubble.prototype.getLabelXY = function (filter) {
         x: 0,
         y: 0
     };
+    var selector = "[data-filter= '" + filter + "']";
+    if (filter == this.config.bubble.allText) {
+        selector = "circle.node";
+    }
     var p = this.config.bubble.padding;
-    $("#" + this.vizId).find("[data-filter= '" + filter + "']")
+    $("#" + this.vizId).find(selector)
         .each(function (e) {
             var cx = parseFloat($(this).attr("cx"));
             var cy = parseFloat($(this).attr("cy"));
@@ -550,7 +554,9 @@ MotionBubble.prototype.text = function (node, center, filter) {
              * central.
              */
             if (!thiz.filtersData[filter]) {
-                pts.y += dt.y + dt.r;
+                //cundo se obtiene el valor de y la burbuja se encuentra calculando la clusterización
+                // de los colores por lo tanto se tomo como y el 70% de su valor.
+                pts.y = pts.y * 0.70;
                 pts.x = dt.x;
             } else if (thiz.filtersData[filter] && thiz.filtersData[filter]["MAX_Y"] <= pts.y) {
                 thiz.filtersData[filter]["MAX_Y"] = pts.y + thiz.ypadding;
