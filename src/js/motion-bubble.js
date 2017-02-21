@@ -1,5 +1,7 @@
 /**
- * Montion Bubble graph
+ * Este tipo de visualización implementa los gráficos de burbujas
+ * apliadas y clusterizadas por color. Las bubujas pueden ser agrupadas
+ * los criterios de filtrado definidos.
  */
 function MotionBubble(config) {
     UiBuilder.call(this, config);
@@ -15,6 +17,9 @@ function MotionBubble(config) {
     }
 }
 
+/**
+ * @construtor
+ */
 MotionBubble.prototype = new UiBuilder();
 MotionBubble.prototype.constructor = MotionBubble;
 
@@ -38,9 +43,10 @@ MotionBubble.prototype.prepareContainer = function () {
  */
 MotionBubble.prototype.buildFilter = function () {
     var filters = [];
+
     if (this.config.filters.length > 0) {
         filters.push({
-            text: "Todos",
+            text: this.config.bubble.allText,
             value: "all"
         });
         filters = filters.concat(this.config.filters);
@@ -79,6 +85,11 @@ MotionBubble.prototype.buildFilter = function () {
     });
 }
 
+/**
+ * Se encarga de obtener el mayor radio de las burbujas existentes del gráfico.
+ * @param   {String} attr el nombre de la columna por la cual se aplica el filtro
+ * @returns {Number} El tamaño del máximo radio encontrado.
+ */
 MotionBubble.prototype.getMaxRadius = function (attr) {
     var max = null;
     for (var key in this.filtersData[attr]) {
@@ -91,7 +102,8 @@ MotionBubble.prototype.getMaxRadius = function (attr) {
 }
 
 /**
- * Se encarga de calcular el centro de los filtros
+ * Se encarga de calcular el centro de los filtros configurados para el gráfico.
+ * 
  */
 MotionBubble.prototype.calculateFilterCenter = function () {
     this.filterCenters = {};
@@ -160,8 +172,6 @@ MotionBubble.prototype.calculateFilterCenter = function () {
 }
 
 
-
-
 /**
  * Se sobrescribe el método rollup del base builder
  */
@@ -207,9 +217,14 @@ MotionBubble.prototype.buildNodes = function (data, filter) {
         return d[thiz.config.size];
     });
 
+    var sum = d3.sum(darray, function (d) {
+        return d[thiz.config.size];
+    });
+
     this.sizeData = {};
     this.sizeData.max = max;
     this.sizeData.min = min;
+    this.sizeData.sum = sum;
     min = min == max ? 0 : min;
     //se calcula el tamaño máximo que puede tener el radio de las burbujas
     // utilizando un lógica medio rara.
@@ -314,11 +329,13 @@ MotionBubble.prototype.builder = function (data) {
 }
 
 /**
- *
+ * Determina la carga de las bubujas, es utilizada para definr la proximidad 
+ * y el momiviento de las mismas.
  */
 MotionBubble.prototype.charge = function (d) {
     return -Math.pow(d.r, 2) / 8;
 };
+
 /**
  * Se encarga de iniciar la simulación.
  * @returns {d3.layout} el layout
@@ -334,6 +351,7 @@ MotionBubble.prototype.start = function () {
         .nodes(this.nodes)
         .size([this.width, this.diameter]);
 };
+
 /**
  * Tick advances the simulation by one time step. That is, the forces on the nodes are 
  * calculated and their positions based on those forces.
@@ -418,19 +436,21 @@ MotionBubble.prototype.groupAll = function (nodes, filter) {
 
     if (typeof filter != "undefined") {
         this.resizeViz(this.filtersData[filter]["MAX_Y"]);
-        /*
-        Se invoca al metodo que renderiza los labels de los grupos luego de
-        1 segundo para darle tiempo a que las burbujas se reposicionen.
-        */
-        setTimeout(function (curtime) {
-            //si esta llamada es la última realizada, se dibujan los filtros sino se ignora
-            if (thiz.currentFilterTime === curtime) {
-                thiz.displayFilters(filter);
-            }
-        }, this.config.bubble.animation * 0.8, currentTime);
     }
+    /*
+    Se invoca al metodo que renderiza los labels de los grupos luego de
+    1 segundo para darle tiempo a que las burbujas se reposicionen.
+    */
+    setTimeout(function (curtime) {
+        //si esta llamada es la última realizada, se dibujan los filtros sino se ignora
+        if (thiz.currentFilterTime === curtime) {
+            thiz.displayFilters(filter);
+        }
+    }, this.config.bubble.animation * 0.8, currentTime);
+    //} else {    }
     this.force.start();
 };
+
 /**
  * Se encarga de realizar la agrupación inicial, se encarga de mover todas las bubujas al 
  * centro de pantalla.
@@ -449,6 +469,7 @@ MotionBubble.prototype.moveTowardsCenter = function (alpha, center) {
         return d.y = d.y + (ty - d.y) * thiz.damper * alpha;
     };
 };
+
 /**
  * Se encarga de realizar la agrupación inicial, se encarga de mover todas las bubujas al 
  * centro de pantalla.
@@ -504,7 +525,7 @@ MotionBubble.prototype.getLabelXY = function (filter) {
 /**
  * Sobrescribe la implementación base que se encarga de construir el 
  * nodo de text.
- * @param   {DOM node elementos que participan en el gráfico.
+ * @param   {DOM} node elementos que participan en el gráfico.
  * @param   {object}   center corresponde al objeto que mapea los textos a las
  *                            ubicaciones y radio de los nodos.
  * @param   {String} filter El atributo que por el cual agrupan las burbujas.
@@ -524,7 +545,14 @@ MotionBubble.prototype.text = function (node, center, filter) {
             var pts = thiz.getLabelXY(d);
             pts.x += dt.r;
             pts.y += thiz.config.bubble.padding;
-            if (thiz.filtersData[filter]["MAX_Y"] <= pts.y) {
+            /*
+             * Si no existe ningún criterio de filtrado es debido a que se trata de la burbuja
+             * central.
+             */
+            if (!thiz.filtersData[filter]) {
+                pts.y += dt.y + dt.r;
+                pts.x = dt.x;
+            } else if (thiz.filtersData[filter] && thiz.filtersData[filter]["MAX_Y"] <= pts.y) {
                 thiz.filtersData[filter]["MAX_Y"] = pts.y + thiz.ypadding;
                 thiz.resizeViz(thiz.filtersData[filter]["MAX_Y"]);
             }
@@ -560,10 +588,36 @@ MotionBubble.prototype.text = function (node, center, filter) {
     return g;
 }
 
+/**
+ * Se encarga de construir los labels de los gráficos.
+ * @param   {[[Type]]} attr el nombre del atributo que corresponde 
+ *                          al filtro actual.
+ * @returns {DOM} La la referencia a los elementos del svg que contienen el label
+ *                de las burbujas.
+ */
 MotionBubble.prototype.displayFilters = function (attr) {
     var thiz = this;
-    var data = d3.keys(this.filterCenters[attr]);
-    var center = thiz.filterCenters[attr];
+    var data, center;
+    /*
+     * Si el atributo de filtrado es undefined es porque se trata de la posición inical
+     * de la burbuja donde se encuentran agrupados todos. Se calculan los parametros para
+     * la burbuja centrar de forma a renderizar el label.
+     */
+    if (typeof attr == "undefined") {
+        data = [this.config.bubble.allText];
+        center = {};
+        center[this.config.bubble.allText] = {
+            filter: this.config.bubble.allText,
+            r: this.diameter / 2,
+            size: this.sizeData.sum,
+            x: this.center.x,
+            y: this.center.y
+        }
+    } else {
+        data = d3.keys(this.filterCenters[attr]);
+        center = thiz.filterCenters[attr];
+    }
+
     var filters = d3.select("#" + this.vizId)
         .select("svg")
         .selectAll(".filters")
@@ -572,10 +626,14 @@ MotionBubble.prototype.displayFilters = function (attr) {
     return thiz.text(filters, center, attr);
 };
 
+/**
+ * Se encarga de ocultar los labels existentes.
+ */
 MotionBubble.prototype.hideFilters = function () {
     d3.select("#" + this.vizId).selectAll(".filters").remove();
     this.resizeViz(this.diameter + this.ypadding);
 };
+
 /**
  * Se encarga de construir la leyenda de colores del gráfico.
  */
@@ -596,7 +654,6 @@ MotionBubble.prototype.colorLegend = function () {
     $target.css("margin-top", (-h) + "px");
     // se añade la lista 
     $target.append($ul);
-    //console.log(items);
 }
 
 /**
