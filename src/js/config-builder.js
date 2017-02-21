@@ -104,6 +104,7 @@ function ConfigBuilder() {
             //maxRadius: 50,
             animation: 2000,
             padding: 10,
+            allText: "Todos"
         },
         cols: 5,
         autoHideLegend: true,
